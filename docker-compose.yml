@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  app:
+    image: php:8.2-fpm
+    volumes:
+      - ./src:/var/www/html
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: laravel_db
+      MYSQL_ROOT_PASSWORD: secret
