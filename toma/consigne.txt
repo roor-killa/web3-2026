@@ -1,0 +1,12 @@
+
+
+Docker:
+PHP
+NGINX
+Laravel
+PostgreSQL
+
+docker-compose.yml
+Laravel
+PHP
+PostgreSQL
