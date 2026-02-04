@@ -2,13 +2,6 @@
 
 ## 2. Structure Laravel (40 min)
 
-### 📋 Objectifs d'apprentissage
-À la fin de cette session, les étudiants seront capables de :
-- Naviguer efficacement dans l'arborescence d'un projet Laravel
-- Comprendre le rôle de chaque dossier principal
-- Expliquer le pattern MVC et son implémentation dans Laravel
-- Identifier où placer leur code selon sa fonction
-
 ---
 
 ### 🎯 Partie 2 : Le pattern MVC dans Laravel (12 min)

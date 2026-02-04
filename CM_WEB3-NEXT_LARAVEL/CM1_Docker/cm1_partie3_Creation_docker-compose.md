@@ -104,7 +104,7 @@ volumes:
 #### Service `app` (PHP)
 ```yaml
 app:
-  image: php:8.2-fpm          # Image PHP 8.2 avec FastCGI
+  image: php:8.4-fpm          # Image PHP 8.4 avec FastCGI
   container_name: laravel_app # Nom du conteneur
   working_dir: /var/www       # Répertoire de travail
   volumes:
