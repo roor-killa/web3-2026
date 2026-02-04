@@ -2,3 +2,4 @@
 - installer composer "getcomposer.org"
 - lancer "docker-compose.yml" avec $docker compose up
 - $composer create-project laravel/laravel
+- php artisan create table
