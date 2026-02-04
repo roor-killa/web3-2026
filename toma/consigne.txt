@@ -10,3 +10,10 @@ docker-compose.yml
 Laravel
 PHP
 PostgreSQL
+
+
+
+-------------------------------------------------------------------------
+
+
+Faire une page de connexion: Email + Mot de Passe pour tester la connecxion frontend -> laravel
