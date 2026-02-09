@@ -45,6 +45,18 @@ docker compose down
 - Documentation FastAPI: http://localhost:8001/docs
 - pgAdmin: http://localhost:8081 (admin@admin.com / admin)
 
+## 📦 Documentation Spécifique
+
+Pour comprendre l'organisation de la **fonctionnalité produit** (exercice exo_product), consultez le document dédié :
+👉 **[README_PRODUITS.md](guindo/projet/README_PRODUITS.md)**
+
+Ce document détaille :
+- L'emplacement de tous les fichiers liés aux produits
+- L'architecture MVC utilisée
+- Les endpoints API disponibles
+- La structure de la base de données
+- Le guide d'utilisation complet
+
 ## Commandes utiles
 
 ### Laravel
