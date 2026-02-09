@@ -1,0 +1,231 @@
+Absolument ! Voici le tableau que tu as décrit, converti en un programme HTML. J'ai essayé de reproduire la structure et les informations aussi fidèlement que possible, en utilisant des `rowspan` et `colspan` pour les cellules fusionnées.
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grille Maquette Licence Info UFR STE 2024-2025</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+        }
+        p {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #e9e9e9;
+            font-weight: bold;
+            text-align: center;
+        }
+        /* Specific styling for merged cells to improve readability */
+        td:nth-child(1), /* Type UE */
+        td:nth-child(2), /* Code UE Apogée */
+        td:nth-child(4), /* Libellé Unité d'Enseignement UE */
+        td:nth-child(11), /* Responsable UE */
+        td:nth-child(17) /* Coef UE */
+        {
+            text-align: center;
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+        .total-row th, .total-row td {
+            background-color: #e0e0e0;
+            font-weight: bold;
+        }
+        .note-row td {
+            font-style: italic;
+            font-size: 0.9em;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Grille Maquette Licence Info UFR STE 2024-2025</h1>
+    <p>Université des Antilles - UFR STE</p>
+    <p>Licence Informatique - L1 - Semestre S1</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">Type UE</th>
+                <th rowspan="2">Code UE Apogée</th>
+                <th rowspan="2">Code EC Apogée</th>
+                <th rowspan="2">Libellé Unité d'Enseignement UE</th>
+                <th rowspan="2">Libellé Élément Constitutif EC</th>
+                <th colspan="5">Volume horaire</th>
+                <th rowspan="2">Responsable UE</th>
+                <th rowspan="2">Responsable EC</th>
+                <th colspan="5">Épreuves contrôle continu<br>(Nombre minimum)</th>
+                <th rowspan="2">Coef UE</th>
+                <th rowspan="2">Coef EC</th>
+                <th rowspan="2">ECTS</th>
+            </tr>
+            <tr>
+                <th>CM</th>
+                <th>TD</th>
+                <th>TP</th>
+                <th>Autonomie</th>
+                <th>TOTAL</th>
+                <th>Rapport</th>
+                <th>Oral</th>
+                <th>TP</th>
+                <th>Autre (1)</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- UE01: OSSATURE (SCIENCES EXACTES) -->
+            <tr>
+                <td rowspan="5">UE01: OSSATURE</td>
+                <td rowspan="5">UE010</td>
+                <td></td>
+                <td rowspan="5">SCIENCES EXACTES</td>
+                <td>1110 - Mise à niveau scientifique</td>
+                <td>32</td><td></td><td></td><td></td><td>32</td>
+                <td rowspan="5">P. Hunel</td>
+                <td>NAMBDA</td>
+                <td>3</td><td></td><td></td><td></td><td>3</td>
+                <td rowspan="5">23</td>
+                <td></td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>1120 - Chimie générale Dispense LAS</td>
+                <td></td><td>14</td><td>14</td><td></td><td>28</td>
+                <td>CHEVALIER</td>
+                <td>3</td><td></td><td></td><td></td><td>3</td>
+                <td></td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>1130 - Informatique des Sciences Exactes</td>
+                <td>16</td><td></td><td></td><td>18</td><td>34</td>
+                <td>HUNEL</td>
+                <td>3</td><td></td><td></td><td></td><td>3</td>
+                <td></td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>1140 - Optique géométrique Dispense LAS</td>
+                <td></td><td>14</td><td>14</td><td></td><td>28</td>
+                <td>ARAB</td>
+                <td>2</td><td></td><td></td><td></td><td>2</td>
+                <td></td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>1150 - Mathématiques des Sciences Exactes</td>
+                <td>40</td><td></td><td></td><td></td><td>40</td>
+                <td>TEPIT</td>
+                <td>3</td><td></td><td></td><td></td><td>3</td>
+                <td></td>
+                <td>5</td>
+            </tr>
+
+            <!-- UE02: OSSATURE (CULTURE SCIENTIFIQUE) -->
+            <tr>
+                <td>UE02: OSSATURE</td>
+                <td>UE011</td>
+                <td></td>
+                <td>CULTURE SCIENTIFIQUE</td>
+                <td>1210 - Informatique: applications usuelles</td>
+                <td>12</td><td></td><td></td><td>14</td><td>26</td>
+                <td>C. Ramassamy</td>
+                <td>RAMASSAMY C.</td>
+                <td></td><td></td><td></td><td>1</td><td>1</td>
+                <td>2</td>
+                <td>2</td>
+                <td>2</td>
+            </tr>
+
+            <!-- UET: TRANSVERSALE -->
+            <tr>
+                <td rowspan="4">UET: TRANSVERSALE</td>
+                <td rowspan="4">UE012</td>
+                <td></td>
+                <td rowspan="4">Disciplines transversales</td>
+                <td>131T - L.V.E. Anglais</td>
+                <td></td><td>24</td><td></td><td></td><td>24</td>
+                <td rowspan="4">P. Hunel</td>
+                <td>CECINA J.</td>
+                <td></td><td>2</td><td></td><td></td><td>2</td>
+                <td rowspan="4"></td>
+                <td>0.6</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>132T - Méthodologie du travail universitaire, construction du projet personnel et professionnel</td>
+                <td></td><td>12</td><td></td><td></td><td>12</td>
+                <td>VAUCLIN</td>
+                <td></td><td></td><td></td><td>2</td><td>2</td>
+                <td>0.6</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>133T - OM</td>
+                <td>6</td><td></td><td></td><td>6</td><td>12</td>
+                <td>RAMASSAMY M.</td>
+                <td></td><td>2</td><td></td><td></td><td>2</td>
+                <td>0.3</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>134T - Méthodologie documentaire - Pratiques appliquées au travail universitaire</td>
+                <td></td><td>1</td><td></td><td>3</td><td>4</td>
+                <td>BU</td>
+                <td></td><td></td><td></td><td>2</td><td>2</td>
+                <td>1</td>
+                <td>1</td>
+            </tr>
+
+            <!-- Totaux du Semestre -->
+            <tr class="total-row">
+                <td colspan="4">Total volume horaire par type</td>
+                <td></td> <!-- Empty cell for Libellé EC -->
+                <td>100</td><td>28</td><td>32</td><td>92</td><td>240</td>
+                <td colspan="7"></td> <!-- Empty cells for Responsables and CC -->
+                <td colspan="2">Total ECTS</td>
+                <td>30</td>
+            </tr>
+            <tr class="note-row">
+                <td colspan="10">Total volume horaire semestre: 240</td>
+                <td colspan="9">Précision du type de CC (1): 240 (43T et 144): Évaluation en distanciel sur la plateforme pédagogique</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
+```

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Application Bancaire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Application Bancaire</h1>
+    <p>Solde actuel : <span id="solde">1000 €</span></p>
+
+    <div class="operation-form">
+        <label for="montant">Montant :</label>
+        <input type="number" id="montant" placeholder="Montant">
+        <button id="depot">Déposer</button>
+        <button id="retrait">Retirer</button>
+    </div>
+
+    <h2>Transactions récentes :</h2>
+    <ul id="transactions">
+        <!-- Les transactions seront ajoutées ici -->
+    </ul>
+
+    <script src="script.js"></script>
+</body>
+</html>

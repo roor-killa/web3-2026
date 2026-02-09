@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercices JavaScript</title>
+    <!-- Liens vers les fichiers CSS -->
+    <link rel="stylesheet" href="ex1.css">
+    <link rel="stylesheet" href="ex2.css">
+    <link rel="stylesheet" href="ex3.css">
+    <link rel="stylesheet" href="ex4.css">
+    <link rel="stylesheet" href="ex5.css">
+</head>
+<body>
+
+    <!-- Exercice 1 : Liste de tâches -->
+    <h1>Exercice 1 : Liste de tâches</h1>
+    <div id="exercice1">
+        <ul id="taskList">
+            <!-- Les tâches seront ajoutées ici via JavaScript -->
+        </ul>
+        <!-- Vous pouvez ajouter un formulaire pour ajouter de nouvelles tâches -->
+    </div>
+    <hr>
+
+    <!-- Exercice 2 : Quiz -->
+    <h1>Exercice 2 : Quiz</h1>
+    <div id="exercice2">
+        <div id="quizContainer">
+            <!-- Les questions et réponses seront ajoutées ici via JavaScript -->
+        </div>
+        <button id="submitButton">Soumettre</button>
+        <div id="result"></div>
+    </div>
+    <hr>
+
+    <!-- Exercice 3 : Gestion de produits -->
+    <h1>Exercice 3 : Gestion de produits</h1>
+    <div id="exercice3">
+        <div id="productContainer">
+            <!-- Les produits seront affichés ici via JavaScript -->
+        </div>
+        <h2>Ajouter un produit</h2>
+        <form id="addProductForm">
+            <label for="name">Nom :</label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="price">Prix :</label>
+            <input type="number" id="price" name="price"><br><br>
+            <label for="category">Catégorie :</label>
+            <input type="text" id="category" name="category"><br><br>
+            <button type="submit">Ajouter</button>
+        </form>
+    </div>
+    <hr>
+
+    <!-- Exercice 4 : Tableau de scores de jeu -->
+    <h1>Exercice 4 : Tableau de scores de jeu</h1>
+    <div id="exercice4">
+        <table id="scoreTable">
+            <thead>
+                <tr>
+                    <th>Joueur</th>
+                    <th>Niveau</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Les scores seront ajoutés ici via JavaScript -->
+            </tbody>
+        </table>
+        <h2>Soumettre un score</h2>
+        <form id="addScoreForm">
+            <label for="playerName">Nom du joueur :</label>
+            <input type="text" id="playerName" name="playerName"><br><br>
+            <label for="level">Niveau :</label>
+            <input type="number" id="level" name="level"><br><br>
+            <label for="score">Score :</label>
+            <input type="number" id="score" name="score"><br><br>
+            <button type="submit">Soumettre</button>
+        </form>
+    </div>
+    <hr>
+
+    <!-- Exercice 5 : Liste de contacts -->
+    <h1>Exercice 5 : Liste de contacts</h1>
+    <div id="exercice5">
+        <div id="contactContainer">
+            <!-- Les contacts seront affichés ici via JavaScript -->
+        </div>
+        <h2>Ajouter un contact</h2>
+        <form id="addContactForm">
+            <label for="name">Nom :</label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email"><br><br>
+            <label for="phone">Téléphone :</label>
+            <input type="tel" id="phone" name="phone"><br><br>
+            <button type="submit">Ajouter</button>
+        </form>
+        <h2>Rechercher un contact</h2>
+        <input type="text" id="search" placeholder="Rechercher par nom, email ou téléphone">
+    </div>
+
+    <!-- Liens vers les fichiers JavaScript -->
+    <script src="ex1.js"></script>
+    <script src="ex2.js"></script>
+    <script src="ex3.js"></script>
+    <script src="ex4.js"></script>
+    <script src="ex5.js"></script>
+</body>
+</html>

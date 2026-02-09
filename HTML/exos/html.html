@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affichage des Formations</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <input type="file" id="file-input" accept="application/json">
+    <h3>Contenu du fichier :</h3>
+    <div id="file-content"></div>
+
+    <script>
+        function genererTableauSemestre(semestre) {
+            let tableauHTML = `
+                <h2>${semestre.nom}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code UE</th>
+                            <th>Nom UE</th>
+                            <th>ECTS</th>
+                            <th>Cours</th>
+                            <th>Enseignant</th>
+                            <th>Volume Horaire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            semestre.ue.forEach(ue => {
+                ue.cours.forEach((cours, index) => {
+                    tableauHTML += `
+                        <tr>
+                            ${index === 0 ? `<td rowspan="${ue.cours.length}">${ue.code}</td>
+                                             <td rowspan="${ue.cours.length}">${ue.nom}</td>
+                                             <td rowspan="${ue.cours.length}">${ue.ects}</td>` : ''}
+                            <td>${cours.nom}</td>
+                            <td>${cours.enseignant}</td>
+                            <td>${cours.volumeHoraire}</td>
+                        </tr>
+                    `;
+                });
+            });
+
+            tableauHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            return tableauHTML;
+        }
+
+        function afficherTableau(json) {
+            const formation = JSON.parse(json);
+            const semestreCible = formation.semestres.find(semestre => semestre.numero === 1); // Choisissez le semestre souhaité
+            if (semestreCible) {
+                const tableauHTML = genererTableauSemestre(semestreCible);
+                document.getElementById('file-content').innerHTML = tableauHTML; // Utilisez l'élément approprié pour l'affichage
+            } else {
+                document.getElementById('file-content').innerHTML = "<p>Semestre non trouvé.</p>";
+            }
+        }
+
+        function readFile(e) {
+            var file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = () => afficherTableau(reader.result);
+            reader.readAsText(file);
+        }
+
+        document.getElementById('file-input')
+            .addEventListener('change', readFile, false);
+    </script>
+</body>
+</html>
