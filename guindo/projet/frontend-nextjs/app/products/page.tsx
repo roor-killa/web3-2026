@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 interface Product {
     id: number;
@@ -15,6 +16,7 @@ export default function ProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [deleting, setDeleting] = useState<number | null>(null);
 
     useEffect(() => {
         fetchProducts();
@@ -35,6 +37,32 @@ export default function ProductsPage() {
             console.error(err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const deleteProduct = async (id: number) => {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+            return;
+        }
+
+        setDeleting(id);
+        try {
+            const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+                method: 'DELETE',
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setProducts(products.filter(p => p.id !== id));
+            } else {
+                alert('Erreur lors de la suppression');
+            }
+        } catch (err) {
+            alert('Erreur de connexion');
+            console.error(err);
+        } finally {
+            setDeleting(null);
         }
     };
 
@@ -84,25 +112,53 @@ export default function ProductsPage() {
             padding: '3rem 1rem'
         }}>
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                {/* Header */}
+                {/* Header with Action */}
                 <div style={{
-                    textAlign: 'center',
-                    marginBottom: '3rem'
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '3rem',
+                    flexWrap: 'wrap',
+                    gap: '1rem'
                 }}>
-                    <h1 style={{
-                        fontSize: '3rem',
-                        fontWeight: 'bold',
-                        color: 'white',
-                        marginBottom: '0.5rem'
-                    }}>
-                        Nos Produits
-                    </h1>
-                    <p style={{
-                        fontSize: '1.25rem',
-                        color: 'rgba(255, 255, 255, 0.9)'
-                    }}>
-                        Découvrez notre sélection de {products.length} produits
-                    </p>
+                    <div>
+                        <h1 style={{
+                            fontSize: '3rem',
+                            fontWeight: 'bold',
+                            color: 'white',
+                            marginBottom: '0.5rem',
+                            lineHeight: '1.2'
+                        }}>
+                            Nos Produits
+                        </h1>
+                        <p style={{
+                            fontSize: '1.25rem',
+                            color: 'rgba(255, 255, 255, 0.9)'
+                        }}>
+                            Découvrez notre sélection de {products.length} produits
+                        </p>
+                    </div>
+
+                    <Link
+                        href="/products/create"
+                        style={{
+                            backgroundColor: 'white',
+                            color: '#667eea',
+                            padding: '0.75rem 1.5rem',
+                            borderRadius: '0.5rem',
+                            fontWeight: '600',
+                            textDecoration: 'none',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                            transition: 'transform 0.2s',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                        <span style={{ fontSize: '1.25rem' }}>+</span> Ajouter un produit
+                    </Link>
                 </div>
 
                 {/* Products Grid */}
@@ -172,7 +228,8 @@ export default function ProductsPage() {
                             {/* Price */}
                             <div style={{
                                 borderTop: '1px solid #e5e7eb',
-                                paddingTop: '1rem'
+                                paddingTop: '1rem',
+                                marginBottom: '1rem'
                             }}>
                                 <div style={{
                                     display: 'flex',
@@ -194,6 +251,65 @@ export default function ProductsPage() {
                                         {parseFloat(product.price).toFixed(2)}€
                                     </span>
                                 </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '0.75rem',
+                                borderTop: '1px solid #e5e7eb',
+                                paddingTop: '1rem'
+                            }}>
+                                <Link
+                                    href={`/products/edit/${product.id}`}
+                                    style={{
+                                        flex: 1,
+                                        backgroundColor: '#667eea',
+                                        color: 'white',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '0.375rem',
+                                        textDecoration: 'none',
+                                        textAlign: 'center',
+                                        fontWeight: '500',
+                                        fontSize: '0.875rem',
+                                        transition: 'background-color 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5568d3'}
+                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
+                                >
+                                    ✏️ Modifier
+                                </Link>
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        deleteProduct(product.id);
+                                    }}
+                                    disabled={deleting === product.id}
+                                    style={{
+                                        flex: 1,
+                                        backgroundColor: deleting === product.id ? '#d1d5db' : '#dc2626',
+                                        color: 'white',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '0.375rem',
+                                        border: 'none',
+                                        fontWeight: '500',
+                                        fontSize: '0.875rem',
+                                        cursor: deleting === product.id ? 'not-allowed' : 'pointer',
+                                        transition: 'background-color 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (deleting !== product.id) {
+                                            e.currentTarget.style.backgroundColor = '#b91c1c';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (deleting !== product.id) {
+                                            e.currentTarget.style.backgroundColor = '#dc2626';
+                                        }
+                                    }}
+                                >
+                                    {deleting === product.id ? '⏳ Suppression...' : '🗑️ Supprimer'}
+                                </button>
                             </div>
                         </div>
                     ))}
