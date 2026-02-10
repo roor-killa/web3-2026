@@ -23,5 +23,4 @@ class ProductController extends Controller
     $products = \App\Models\Product::all();
     return response()->json($products);
     }
-
 }
