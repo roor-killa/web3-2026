@@ -2,10 +2,11 @@ FROM php:8.4-fpm-alpine
 
 WORKDIR /var/www/html
 
-# Install system dependencies
+# Installer les dépendances système
 RUN apk add --no-cache \
     build-base \
-    libpq-dev \
+    libpq \
+    postgresql-dev \
     postgresql-client \
     git \
     curl \
@@ -14,7 +15,7 @@ RUN apk add --no-cache \
     libxml2-dev \
     oniguruma-dev
 
-# Install PHP extensions
+# Installer les extensions PHP nécessaires
 RUN docker-php-ext-install \
     pdo \
     pdo_pgsql \
@@ -22,22 +23,21 @@ RUN docker-php-ext-install \
     mbstring \
     xml
 
-# Install Composer
+# Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy composer files first
+# Copier les fichiers composer pour installer les dépendances
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies (NO scripts during build)
 RUN composer install --no-interaction --no-dev --no-scripts --optimize-autoloader
 
-# Copy application files
+# Copier le reste de l'application Laravel
 COPY . .
 
-# Create necessary directories with proper permissions (Laravel)
+# Créer les dossiers nécessaires et régler les permissions
 RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-EXPOSE 8000
-
+# Démarrer PHP-FPM
+EXPOSE 9000
 CMD ["php-fpm"]
