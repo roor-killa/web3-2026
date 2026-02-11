@@ -256,10 +256,38 @@ export default function ProductsPage() {
                             {/* Action Buttons */}
                             <div style={{
                                 display: 'flex',
-                                gap: '0.75rem',
+                                flexWrap: 'wrap',
+                                gap: '0.5rem',
                                 borderTop: '1px solid #e5e7eb',
                                 paddingTop: '1rem'
                             }}>
+                                <Link
+                                    href={`/products/${product.id}`}
+                                    style={{
+                                        flex: '1 1 100%',
+                                        backgroundColor: '#f3f4f6',
+                                        color: '#374151',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '0.375rem',
+                                        textDecoration: 'none',
+                                        textAlign: 'center',
+                                        fontWeight: '600',
+                                        fontSize: '0.875rem',
+                                        transition: 'all 0.2s',
+                                        border: '1px solid #d1d5db',
+                                        marginBottom: '0.5rem'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = '#e5e7eb';
+                                        e.currentTarget.style.borderColor = '#667eea';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = '#f3f4f6';
+                                        e.currentTarget.style.borderColor = '#d1d5db';
+                                    }}
+                                >
+                                    🔍 Voir Détails
+                                </Link>
                                 <Link
                                     href={`/products/edit/${product.id}`}
                                     style={{
