@@ -1,0 +1,12 @@
+vendor/
+node_modules/
+.env
+.env.local
+.git
+.gitignore
+.dockerignore
+.DS_Store
+docker-compose.yml
+README.md
+storage/logs/*
+bootstrap/cache/*

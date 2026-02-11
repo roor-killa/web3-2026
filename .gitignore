@@ -1,0 +1,97 @@
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Laravel 4 specific
+bootstrap/compiled.php
+app/storage/
+
+# Laravel 5 & Lumen specific
+public/storage
+public/hot
+
+# Laravel 5 & Lumen specific with changed public path
+public_html/storage
+public_html/hot
+
+storage/*.key
+.env
+Homestead.yaml
+Homestead.json
+/.vagrant
+.phpunit.result.cache
+
+/public/build
+/storage/pail
+.env.backup
+.env.production
+.phpactor.json
+auth.json
+
+
+# Laravel
+/laravel/.env
+/laravel/.env.local
+/laravel/.env.*.local
+/laravel/vendor/
+/laravel/node_modules/
+/laravel/npm-debug.log
+/laravel/yarn-error.log
+/laravel/storage/logs/
+/laravel/bootstrap/cache/
+/laravel/public/hot
+/laravel/.DS_Store
+
+# Next.js / React
+.next/
+/front-next/.next/
+/front-next/out/
+/front-next/node_modules/
+/front-next/.env.local
+/front-next/.env.*.local
+/front-next/npm-debug.log
+/front-next/yarn-error.log
+/front-next/.DS_Store
+/front-next/coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+.env
+.env.local
+
+# Build
+/build/
+/dist/
+*.log
+
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+# production
+/build      
