@@ -2,19 +2,17 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // Import the Bootstrap Table component
 import { Container, Card, Button, Form } from "react-bootstrap";
 
-interface Product {
-  id: number;
-  titre: string;
-  description: string;
-  prix: number;
-}
 
-export default function Home() {
-  const [products, setProducts] = useState<Product[]>([]);
+export default function Formulaire() {
+  const [newProduct, setNewProduct] = useState({
+    titre: '',
+    description: '',
+    prix:'',
+  });
 
   return (
     <Container className="d-flex justify-content-column align-items-center">
@@ -28,6 +26,8 @@ export default function Home() {
                         required
                         type="text"
                         placeholder="Ex: Laptop Pro" 
+                        value={newProduct.titre}
+                        onChange={(e) => {setNewProduct(prev => ({...prev, "titre":e.target.value}))}}
                     />
                 </Form.Group>
 
@@ -37,6 +37,7 @@ export default function Home() {
                         required
                         type="text"
                         placeholder="Ex: Laptop Pro" 
+                        onChange={(e) => {setNewProduct(prev => ({...prev, "description":e.target.value}))}}
                     />
                 </Form.Group>
 
@@ -44,8 +45,9 @@ export default function Home() {
                     <Form.Label>Description</Form.Label>
                     <Form.Control 
                         required
-                        type="text"
-                        placeholder="Ex: Laptop Pro" 
+                        type="number"
+                        min={0}
+                        onChange={(e) => {setNewProduct(prev => ({...prev, "prix":e.target.value}))}}
                     />
                 </Form.Group>
             </Form>
