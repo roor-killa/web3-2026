@@ -1,0 +1,3 @@
+
+# Permet de créer /routes/api.php
+docker exec -it laravel php artisan install:api

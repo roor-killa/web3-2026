@@ -1,5 +1,4 @@
 
-
 FROM node:20-alpine
 
 WORKDIR /app
@@ -7,16 +6,17 @@ WORKDIR /app
 # Copy package files
 COPY package.json package-lock.json ./
 
+# Install dependencies
 RUN npm install
 
-# Copy source code
+# Copy source code (THIS is when the 'Test' change gets pulled in)
 COPY . .
 
-# Build Next.js app
+# Build the static version of your app
 RUN npm run build
 
-# Expose internal port for SSR
+# The internal port Next.js listens on
 EXPOSE 3000
 
-# Start Next.js in production mode
+# This runs only when the container starts up
 CMD ["npm", "start"]
