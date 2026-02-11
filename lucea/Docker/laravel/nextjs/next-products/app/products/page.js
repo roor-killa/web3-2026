@@ -1,42 +1,59 @@
-import { useEffect, useState } from 'react';
+async function getProducts() {
+  const res = await fetch("http://localhost:8000/api/products", {
+    cache: "no-store",
+  });
 
-export default function ProductsPage() {
-  const [products, setProducts] = useState([]);
+  if (!res.ok) {
+    throw new Error("Erreur API Laravel");
+  }
 
-  useEffect(() => {
-    fetch('http://localhost:8000/api/products')
-      .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(err => console.error(err));
-  }, []);
+  return res.json();
+}
+
+// Petite fonction pour formater les dates
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleString("fr-FR");
+}
+
+export default async function ProductsPage() {
+  const products = await getProducts();
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
-      <h1>Liste des produits</h1>
-      <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-        <thead>
-          <tr>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>ID</th>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>Titre</th>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>Description</th>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>Prix</th>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>Date Création</th>
-            <th style={{ border: '1px solid #ccc', padding: '8px' }}>Date Update</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map(product => (
-            <tr key={product.id}>
-              <td style={{ border: '1px solid #ccc', padding: '8px' }}>{product.id}</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px' }}>{product.titre}</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px' }}>{product.description}</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px' }}>{product.prix.toFixed(2)} €</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px' }}>{product.date_create}</td>
-              <td style={{ border: '1px solid #ccc', padding: '8px' }}>{product.date_update}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <main style={{ padding: "2rem" }}>
+      <h1>Produits</h1>
+
+      <div>
+        {products.map((p) => (
+          <div
+            key={p.id}
+            style={{
+              border: "1px solid #ddd",
+              padding: "1rem",
+              marginBottom: "1rem",
+              borderRadius: "10px",
+              background: "#000000",
+            }}
+          >
+            <p><strong>ID :</strong> {p.id}</p>
+
+            <h3>{p.titre}</h3>
+            <p>{p.description}</p>
+
+            <p><strong>Prix :</strong> {p.prix} €</p>
+
+            <hr />
+
+            <p style={{ fontSize: "0.85rem", color: "#ffffff" }}>
+              <strong>Créé le :</strong> {formatDate(p.date_create)}
+            </p>
+            <p style={{ fontSize: "0.85rem", color: "#ffffff" }}>
+              <strong>Mis à jour le :</strong> {formatDate(p.date_update)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </main>
   );
 }
+
