@@ -13,6 +13,10 @@ interface Product {
     updated_at: string;
 }
 
+/**
+ * Page de détails d'un produit.
+ * Utilise l'ID dynamique de l'URL pour charger les données via la méthode 'show' de l'API.
+ */
 export default function ProductDetailPage() {
     const params = useParams();
     const router = useRouter();
@@ -22,7 +26,11 @@ export default function ProductDetailPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
+    // Charge les détails du produit au montage du composant
     useEffect(() => {
+        /**
+         * Récupère les informations d'un produit unique depuis l'API.
+         */
         const fetchProduct = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/api/products/${productId}`);

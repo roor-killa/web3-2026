@@ -4,6 +4,10 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+/**
+ * Page de création d'un nouveau produit.
+ * Fournit un formulaire pour saisir le nom, le prix et la description.
+ */
 export default function CreateProductPage() {
     const router = useRouter();
     const [name, setName] = useState('');
@@ -12,6 +16,10 @@ export default function CreateProductPage() {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    /**
+     * Gère la soumission du formulaire de création.
+     * Envoie les données en JSON à l'API Laravel.
+     */
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');

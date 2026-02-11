@@ -9,6 +9,7 @@
 - [Emplacement des fichiers](#-emplacement-des-fichiers)
 - [Structure de la base de données](#-structure-de-la-base-de-données)
 - [API REST](#-api-rest)
+- [Frontend Next.js](#-frontend-nextjs)
 - [Guide d'utilisation](#-guide-dutilisation)
 - [Justification de l'architecture](#-justification-de-larchitecture)
 
@@ -355,6 +356,30 @@ DELETE http://localhost:8080/api/products/1
   "message": "Produit supprimé avec succès"
 }
 ```
+
+---
+
+## 💻 Frontend Next.js
+
+L'interface utilisateur pour la gestion des produits est entièrement implémentée avec Next.js 15 (App Router).
+
+### Structure des dossiers
+```
+frontend-nextjs/app/products/
+├── page.tsx            # Liste de tous les produits
+├── [id]/
+│   └── page.tsx        # Détails d'un produit spécifique
+├── create/
+│   └── page.tsx        # Formulaire de création
+└── edit/[id]/
+    └── page.tsx        # Formulaire de modification
+```
+
+### Fonctionnalités Clés
+1. **Fetch & State Management** : Utilisation de `useEffect` et `useState` pour gérer les données et les états de chargement.
+2. **Dynamic Routing** : Exploitation des segments dynamiques de Next.js (`[id]`) pour les pages de détails et d'édition.
+3. **Optimistic UI / Refresh** : Redirection et rafraîchissement des données via `useRouter` après chaque opération CRUD.
+4. **Design Systématique** : Utilisation de CSS-in-JS pour un design moderne, cohérent et responsive sans dépendances lourdes.
 
 ---
 

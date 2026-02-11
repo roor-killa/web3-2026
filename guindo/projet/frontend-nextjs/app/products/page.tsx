@@ -12,16 +12,24 @@ interface Product {
     updated_at: string;
 }
 
+/**
+ * Page d'affichage de la liste des produits.
+ * Récupère les données depuis l'API Laravel et gère les opérations CRUD de base.
+ */
 export default function ProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [deleting, setDeleting] = useState<number | null>(null);
 
+    // Chargement initial des produits au montage du composant
     useEffect(() => {
         fetchProducts();
     }, []);
 
+    /**
+     * Récupère la liste complète des produits via l'API.
+     */
     const fetchProducts = async () => {
         try {
             const response = await fetch('http://localhost:8080/api/products');
@@ -40,6 +48,10 @@ export default function ProductsPage() {
         }
     };
 
+    /**
+     * Supprime un produit après confirmation utilisateur.
+     * @param id Identifiant du produit à supprimer
+     */
     const deleteProduct = async (id: number) => {
         if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
             return;
@@ -54,6 +66,7 @@ export default function ProductsPage() {
             const data = await response.json();
 
             if (data.success) {
+                // Mise à jour de l'état local pour refléter la suppression sans recharger la page
                 setProducts(products.filter(p => p.id !== id));
             } else {
                 alert('Erreur lors de la suppression');
@@ -66,6 +79,7 @@ export default function ProductsPage() {
         }
     };
 
+    // État de chargement initial
     if (loading) {
         return (
             <div style={{

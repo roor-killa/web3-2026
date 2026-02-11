@@ -23,6 +23,21 @@ web3-2026/guindo/projet/
 | **PostgreSQL** | 5433 | Base de données |
 | **pgAdmin** | 8081 | Interface web PostgreSQL |
 
+## 🚀 Fonctionnalités Implémentées
+
+### 🔐 Authentification (Web 3)
+- Système de connexion complet reliant le frontend Next.js au backend Laravel.
+- Validation des identifiants côté serveur.
+- Redirection automatique vers la page d'accueil après succès.
+
+### 📦 Gestion des Produits (CRUD Web 3)
+Une plateforme complète pour gérer un inventaire de produits :
+- **Liste dynamique** : Affichage de tous les produits avec un design moderne (cartes, animations).
+- **Création** : Formulaire intuitif pour ajouter un produit (Nom, Prix, Description).
+- **Détails** : Page dédiée affichant toutes les informations d'un produit spécifique.
+- **Modification** : Mise à jour en temps réel des informations d'un produit.
+- **Suppression** : Retrait sécurisé des produits de la base de données.
+
 ## Démarrage
 
 ```bash

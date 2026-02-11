@@ -11,6 +11,10 @@ interface Product {
     description: string;
 }
 
+/**
+ * Page de modification d'un produit existant.
+ * Charge les données actuelles puis permet de les mettre à jour via l'API.
+ */
 export default function EditProductPage() {
     const router = useRouter();
     const params = useParams();
@@ -23,7 +27,11 @@ export default function EditProductPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingProduct, setIsLoadingProduct] = useState(true);
 
+    // Charge les données du produit à modifier au montage
     useEffect(() => {
+        /**
+         * Récupère les données actuelles du produit.
+         */
         const fetchProduct = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/api/products/${productId}`);
@@ -48,6 +56,9 @@ export default function EditProductPage() {
         fetchProduct();
     }, [productId]);
 
+    /**
+     * Gère la mise à jour du produit via une requête PUT.
+     */
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
