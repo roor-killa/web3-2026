@@ -6,15 +6,29 @@ use Illuminate\Http\Request;
 
    class ProductController extends Controller
 {
+    // Vue Web - Retourne HTML
     public function index()
     {
-        // 1. Utilise le MODEL pour récupérer les données
         $products = Product::all();
+        return view('products.index', compact('products'));
+    }
+
+    // API - Retourne JSON (liste)
+    public function apiIndex()
+    {
+        $products = Product::all();
+        return response()->json($products);
+    }
+
+    // API - Retourne JSON (détail)
+    public function apiShow($id)
+    {
+        $product = Product::find($id);
         
-        // 2. Retourne la VIEW (ici du JSON pour une API)
-        return response()->json([
-            'success' => true,
-            'data' => $products
-        ]);
+        if (!$product) {
+            return response()->json(['error' => 'Produit non trouvé'], 404);
+        }
+        
+        return response()->json($product);
     }
 }
