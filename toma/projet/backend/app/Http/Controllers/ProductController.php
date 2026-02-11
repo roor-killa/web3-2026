@@ -12,7 +12,7 @@ class ProductController extends Controller
         // This is the logic you had in the route
         $products = DB::table('products')->get();
         
-        return response()->json(Product::all());
+        return response()->json($products);
     }
 
     // GET /api/products/5

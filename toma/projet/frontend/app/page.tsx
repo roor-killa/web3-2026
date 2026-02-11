@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 // Import the Bootstrap Table component
-import { Form, Container, Table } from "react-bootstrap";
+import { Container, Table, Button } from "react-bootstrap";
 
 interface Product {
   id: number;
@@ -23,16 +23,11 @@ export default function Home() {
 
   return (
     <Container className="mt-5">
-      <h1 className="mb-4">Les produits</h1>
-      
-      <div>
-        <Form>
-          <Form.Group>
-            <Form.Label>Titre</Form.Label>
-          </Form.Group>
-        </Form>
+      <div className="d-flex justify-content-between align-items-center">
+        <h1 className="mb-4">Les produits</h1>
+        <Button>Ajouter</Button>
       </div>
-
+      
       <div>
       {/* Use React-Bootstrap Table with styling props */}
         <Table striped bordered hover responsive variant="light">
