@@ -1,124 +1,110 @@
-### 🎯 Partie 4 : Paramètres et validation (10 min)
+### 🎯 Partie 5 : Exercice pratique (10 min)
 
-#### Types de paramètres
-
-```php
-// 1. Paramètres d'URL (Route Parameters)
-Route::get('/products/{id}', function ($id) {
-    return "Produit #$id";
-});
-
-// 2. Paramètres optionnels
-Route::get('/products/{category?}', function ($category = null) {
-    if ($category) {
-        return "Catégorie: $category";
-    }
-    return "Tous les produits";
-});
-
-// 3. Contraintes sur paramètres
-Route::get('/products/{id}', function ($id) {
-    //...
-})->where('id', '[0-9]+'); // Uniquement des chiffres
-
-// 4. Paramètres multiples
-Route::get('/categories/{category}/products/{id}', function ($category, $id) {
-    return "Produit #$id dans catégorie $category";
-});
-```
-
-#### Query Parameters (dans l'URL)
+**Créer une API complète pour un système de blog**
 
 ```php
-// URL: /api/products?search=laptop&min_price=500&sort=price
+// À faire en live-coding avec les étudiants:
 
-Route::get('/products', function (Request $request) {
-    $search = $request->query('search');
-    $minPrice = $request->query('min_price', 0); // Valeur par défaut: 0
-    $sort = $request->query('sort', 'name');
-    
-    $products = Product::query();
-    
-    if ($search) {
-        $products->where('name', 'like', "%$search%");
-    }
-    
-    if ($minPrice) {
-        $products->where('price', '>=', $minPrice);
-    }
-    
-    $products->orderBy($sort);
-    
-    return response()->json($products->get());
+// 1. Créer le modèle
+php artisan make:model Article -m
+
+// 2. Définir la migration
+Schema::create('articles', function (Blueprint $table) {
+    $table->id();
+    $table->string('title');
+    $table->text('content');
+    $table->string('author');
+    $table->boolean('published')->default(false);
+    $table->timestamps();
 });
-```
 
-#### Validation avancée
+// 3. Créer le contrôleur
+php artisan make:controller ArticleController --api
 
-```php
-// Créer une Form Request pour validation réutilisable
-php artisan make:request StoreProductRequest
-
-// app/Http/Requests/StoreProductRequest.php
-class StoreProductRequest extends FormRequest
-{
-    public function authorize()
-    {
-        return true; // ou logique d'autorisation
-    }
+// 4. Définir les routes
+Route::prefix('v1')->group(function () {
+    Route::apiResource('articles', ArticleController::class);
     
-    public function rules()
-    {
-        return [
-            'name' => 'required|string|max:255|unique:products',
-            'price' => 'required|numeric|min:0|max:999999.99',
-            'category_id' => 'required|exists:categories,id',
-            'images.*' => 'image|max:2048', // Max 2MB par image
-            'stock' => 'required|integer|min:0',
-            'description' => 'nullable|string|max:1000',
-        ];
-    }
-    
-    public function messages()
-    {
-        return [
-            'name.required' => 'Le nom du produit est obligatoire',
-            'name.unique' => 'Ce produit existe déjà',
-            'price.min' => 'Le prix ne peut pas être négatif',
-            'category_id.exists' => 'Cette catégorie n\'existe pas',
-        ];
-    }
-}
+    // Route custom pour articles publiés
+    Route::get('articles/published', [ArticleController::class, 'published']);
+});
 
-// Dans le contrôleur
-public function store(StoreProductRequest $request)
-{
-    // Si on arrive ici, les données sont valides !
-    $product = Product::create($request->validated());
-    return response()->json($product, 201);
-}
-```
-
-#### Règles de validation courantes
-
-```php
-'required'              // Obligatoire
-'nullable'              // Peut être null
-'string'                // Chaîne de caractères
-'numeric'               // Nombre
-'integer'               // Entier
-'email'                 // Email valide
-'min:5'                 // Minimum 5 (caractères ou valeur)
-'max:255'               // Maximum 255
-'between:1,100'         // Entre 1 et 100
-'unique:products,name'  // Unique dans la table products, colonne name
-'exists:categories,id'  // Doit exister dans categories.id
-'in:small,medium,large' // Doit être parmi ces valeurs
-'regex:/pattern/'       // Expression régulière
-'date'                  // Date valide
-'after:today'           // Date après aujourd'hui
-'image'                 // Fichier image
-'mimes:pdf,docx'        // Types de fichiers autorisés
+// 5. Implémenter les méthodes dans le contrôleur
+// Les étudiants codent:
+// - index() avec filtres (published, author)
+// - store() avec validation
+// - show()
+// - update()
+// - destroy()
+// - published() méthode custom
 ```
 
 ---
+
+### ✅ Récapitulatif & Best Practices (5 min)
+
+#### Checklist pour créer une API
+
+- [ ] Utiliser `routes/api.php`
+- [ ] Suivre la convention RESTful
+- [ ] Utiliser `apiResource` pour les CRUD standards
+- [ ] Valider toutes les entrées utilisateur
+- [ ] Retourner les bons codes HTTP
+- [ ] Grouper les routes logiquement
+- [ ] Protéger les routes sensibles avec middleware
+- [ ] Documenter vos endpoints (postman/swagger)
+
+#### Pattern de réponse standardisée
+
+```php
+// Succès
+return response()->json([
+    'success' => true,
+    'data' => $products,
+    'message' => 'Produits récupérés avec succès'
+], 200);
+
+// Erreur
+return response()->json([
+    'success' => false,
+    'message' => 'Produit non trouvé',
+    'errors' => []
+], 404);
+```
+
+#### Pour le projet de semestre
+
+```markdown
+Votre API devra:
+1. Gérer au moins 3 ressources (ex: produits, catégories, commandes)
+2. Implémenter l'authentification (Laravel Sanctum)
+3. Avoir des routes protégées et publiques
+4. Valider toutes les données entrantes
+5. Retourner des erreurs cohérentes
+6. Être testée avec Postman
+7. Être documentée
+```
+
+---
+
+## 📚 Ressources complémentaires
+
+**Documentation officielle:**
+- Structure Laravel: https://laravel.com/docs/structure
+- Routing: https://laravel.com/docs/routing
+- Controllers: https://laravel.com/docs/controllers
+- Validation: https://laravel.com/docs/validation
+
+**Exercices pour la semaine:**
+1. Créer une API complète pour gérer une bibliothèque (livres, auteurs, emprunts)
+2. Implémenter des filtres et recherche
+3. Ajouter des validations personnalisées
+4. Tester avec Postman et documenter
+
+**Prochaine session:** 
+- Eloquent ORM et relations entre modèles
+- Authentication avec Laravel Sanctum
+
+---
+
+*Bokaynou ! Des questions ?* 🚀
