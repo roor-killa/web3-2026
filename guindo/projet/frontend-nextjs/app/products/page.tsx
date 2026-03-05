@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import { apiGet, apiDelete, ApiResponse } from '@/lib/api';
 
 interface Product {
     id: number;
@@ -32,10 +34,9 @@ export default function ProductsPage() {
      */
     const fetchProducts = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/products');
-            const data = await response.json();
+            const data = await apiGet<ApiResponse<Product[]>>('/products');
 
-            if (data.success) {
+            if (data.success && data.data) {
                 setProducts(data.data);
             } else {
                 setError('Erreur lors du chargement des produits');
@@ -59,11 +60,7 @@ export default function ProductsPage() {
 
         setDeleting(id);
         try {
-            const response = await fetch(`http://localhost:8080/api/products/${id}`, {
-                method: 'DELETE',
-            });
-
-            const data = await response.json();
+            const data = await apiDelete<ApiResponse>(`/products/${id}`);
 
             if (data.success) {
                 // Mise à jour de l'état local pour refléter la suppression sans recharger la page
@@ -82,49 +79,57 @@ export default function ProductsPage() {
     // État de chargement initial
     if (loading) {
         return (
-            <div style={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
-            }}>
-                <div style={{ color: 'white', fontSize: '1.5rem' }}>
-                    Chargement des produits...
+            <>
+                <Navbar />
+                <div style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
+                }}>
+                    <div style={{ color: 'white', fontSize: '1.5rem' }}>
+                        Chargement des produits...
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     if (error) {
         return (
-            <div style={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
-            }}>
+            <>
+                <Navbar />
                 <div style={{
-                    background: 'white',
-                    padding: '2rem',
-                    borderRadius: '1rem',
-                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-                    textAlign: 'center'
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
                 }}>
-                    <h2 style={{ color: '#dc2626', marginBottom: '1rem' }}>Erreur</h2>
-                    <p style={{ color: '#6b7280' }}>{error}</p>
+                    <div style={{
+                        background: 'white',
+                        padding: '2rem',
+                        borderRadius: '1rem',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                        textAlign: 'center'
+                    }}>
+                        <h2 style={{ color: '#dc2626', marginBottom: '1rem' }}>Erreur</h2>
+                        <p style={{ color: '#6b7280' }}>{error}</p>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
-            padding: '3rem 1rem'
-        }}>
+        <>
+            <Navbar />
+            <div style={{
+                minHeight: '100vh',
+                background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
+                padding: '3rem 1rem'
+            }}>
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                 {/* Header with Action */}
                 <div style={{
@@ -372,5 +377,6 @@ export default function ProductsPage() {
                 )}
             </div>
         </div>
+        </>
     );
 }

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Navbar from '@/components/navbar';
+import { apiGet, ApiResponse } from '@/lib/api';
 
 interface Product {
     id: number;
@@ -33,10 +35,9 @@ export default function ProductDetailPage() {
          */
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/products/${productId}`);
-                const data = await response.json();
+                const data = await apiGet<ApiResponse<Product>>(`/products/${productId}`);
 
-                if (data.success) {
+                if (data.success && data.data) {
                     setProduct(data.data);
                 } else {
                     setError('Produit non trouvé');
@@ -56,29 +57,34 @@ export default function ProductDetailPage() {
 
     if (loading) {
         return (
-            <div style={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
-            }}>
-                <div style={{ color: 'white', fontSize: '1.5rem' }}>
-                    Chargement des détails du produit...
+            <>
+                <Navbar />
+                <div style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
+                }}>
+                    <div style={{ color: 'white', fontSize: '1.5rem' }}>
+                        Chargement des détails du produit...
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     if (error || !product) {
         return (
-            <div style={{
-                minHeight: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
-            }}>
+            <>
+                <Navbar />
+                <div style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
+                }}>
                 <div style={{
                     background: 'white',
                     padding: '2rem',
@@ -104,11 +110,14 @@ export default function ProductDetailPage() {
                     </Link>
                 </div>
             </div>
+            </>
         );
     }
 
     return (
-        <div style={{
+        <>
+            <Navbar />
+            <div style={{
             minHeight: '100vh',
             background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
             padding: '3rem 1rem',
@@ -249,5 +258,6 @@ export default function ProductDetailPage() {
                 </div>
             </div>
         </div>
+        </>
     );
 }

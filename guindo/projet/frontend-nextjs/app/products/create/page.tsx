@@ -3,6 +3,8 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import { apiPost, ApiResponse } from '@/lib/api';
 
 /**
  * Page de création d'un nouveau produit.
@@ -26,22 +28,13 @@ export default function CreateProductPage() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8080/api/products', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    name,
-                    price: parseFloat(price),
-                    description,
-                }),
+            const data = await apiPost<ApiResponse>('/products', {
+                name,
+                price: parseFloat(price),
+                description,
             });
 
-            const data = await response.json();
-
-            if (response.ok && data.success) {
+            if (data.success) {
                 // Rediriger vers la liste des produits après succès
                 router.push('/products');
                 router.refresh(); // Rafraîchir les données de la page suivante
@@ -57,14 +50,16 @@ export default function CreateProductPage() {
     };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
-            padding: '2rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }}>
+        <>
+            <Navbar />
+            <div style={{
+                minHeight: '100vh',
+                background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
+                padding: '2rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
             <div style={{
                 background: 'white',
                 padding: '2.5rem',
@@ -239,5 +234,6 @@ export default function CreateProductPage() {
                 </form>
             </div>
         </div>
+        </>
     );
 }

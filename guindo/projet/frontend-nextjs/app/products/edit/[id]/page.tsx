@@ -3,6 +3,8 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import { apiGet, apiPut, ApiResponse } from '@/lib/api';
 
 interface Product {
     id: number;
@@ -34,10 +36,9 @@ export default function EditProductPage() {
          */
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/products/${productId}`);
-                const data = await response.json();
+                const data = await apiGet<ApiResponse<Product>>(`/products/${productId}`);
 
-                if (data.success) {
+                if (data.success && data.data) {
                     const product: Product = data.data;
                     setName(product.name);
                     setPrice(product.price);
@@ -65,22 +66,13 @@ export default function EditProductPage() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`http://localhost:8080/api/products/${productId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    name,
-                    price: parseFloat(price),
-                    description,
-                }),
+            const data = await apiPut<ApiResponse>(`/products/${productId}`, {
+                name,
+                price: parseFloat(price),
+                description,
             });
 
-            const data = await response.json();
-
-            if (response.ok && data.success) {
+            if (data.success) {
                 router.push('/products');
                 router.refresh();
             } else {
@@ -96,22 +88,27 @@ export default function EditProductPage() {
 
     if (isLoadingProduct) {
         return (
-            <div style={{
-                minHeight: '100vh',
-                background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}>
-                <div style={{ color: 'white', fontSize: '1.5rem' }}>
-                    Chargement du produit...
+            <>
+                <Navbar />
+                <div style={{
+                    minHeight: '100vh',
+                    background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
+                    <div style={{ color: 'white', fontSize: '1.5rem' }}>
+                        Chargement du produit...
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     return (
-        <div style={{
+        <>
+            <Navbar />
+            <div style={{
             minHeight: '100vh',
             background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
             padding: '2rem',
@@ -297,5 +294,6 @@ export default function EditProductPage() {
                 </form>
             </div>
         </div>
+        </>
     );
 }
