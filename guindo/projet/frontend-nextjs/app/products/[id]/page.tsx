@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '@/components/navbar';
+import Navbar from '@/components/Navbar';
 import { apiGet, ApiResponse } from '@/lib/api';
 
 interface Product {
