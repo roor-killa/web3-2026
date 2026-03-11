@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { clearAccessToken, getAccessToken } from '@/lib/auth';
 
 export default function NewProductPage() {
   const router = useRouter();
@@ -19,6 +20,12 @@ export default function NewProductPage() {
   const apiBase = useMemo(() => {
     return (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/$/, '');
   }, []);
+
+  useEffect(() => {
+    if (!getAccessToken()) {
+      router.replace('/login');
+    }
+  }, [router]);
 
   const mapApiError = (message: string) => {
     if (message.includes('422')) {
@@ -46,13 +53,28 @@ export default function NewProductPage() {
     };
 
     try {
+      const token = getAccessToken();
+      if (!token) {
+        router.replace('/login');
+        return;
+      }
+
       const response = await fetch(`${apiBase}/products`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          clearAccessToken();
+          router.replace('/login');
+          return;
+        }
         throw new Error(`Erreur API: ${response.status}`);
       }
 
@@ -67,24 +89,24 @@ export default function NewProductPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-zinc-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Ajouter un produit</h1>
+          <h1 className="text-3xl font-bold text-zinc-100">Ajouter un produit</h1>
           <Link
             href="/products"
-            className="px-3 py-2 rounded-md border border-gray-300 text-gray-700"
+            className="px-3 py-2 rounded-md border border-zinc-700 text-zinc-200"
           >
             Retour
           </Link>
         </div>
 
         <form
-          className="bg-white rounded-lg shadow-md p-6 grid gap-4 md:grid-cols-2"
+          className="bg-zinc-900 rounded-lg shadow-md p-6 grid gap-4 md:grid-cols-2"
           onSubmit={submitForm}
         >
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="name">
+            <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="name">
               Nom
             </label>
             <input
@@ -93,13 +115,13 @@ export default function NewProductPage() {
               value={form.name}
               onChange={handleChange}
               required
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
               placeholder="Nom du produit"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="price">
+            <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="price">
               Prix
             </label>
             <input
@@ -111,13 +133,13 @@ export default function NewProductPage() {
               value={form.price}
               onChange={handleChange}
               required
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
               placeholder="0.00"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="sku">
+            <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="sku">
               SKU
             </label>
             <input
@@ -125,13 +147,13 @@ export default function NewProductPage() {
               name="sku"
               value={form.sku}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
               placeholder="SKU-001"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="quantity">
+            <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="quantity">
               Quantite
             </label>
             <input
@@ -141,13 +163,13 @@ export default function NewProductPage() {
               min="0"
               value={form.quantity}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
               placeholder="0"
             />
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="description">
+            <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="description">
               Description
             </label>
             <textarea
@@ -156,7 +178,7 @@ export default function NewProductPage() {
               value={form.description}
               onChange={handleChange}
               rows={3}
-              className="w-full rounded-md border border-gray-300 px-3 py-2"
+              className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
               placeholder="Description du produit"
             />
           </div>
@@ -171,7 +193,7 @@ export default function NewProductPage() {
             </button>
             <Link
               href="/products"
-              className="px-4 py-2 rounded-md border border-gray-300 text-gray-700"
+              className="px-4 py-2 rounded-md border border-zinc-700 text-zinc-200"
             >
               Annuler
             </Link>

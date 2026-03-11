@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { clearAccessToken, getAccessToken } from '@/lib/auth';
 
 interface Product {
   id: number;
@@ -15,6 +17,7 @@ interface Product {
 }
 
 export default function ProductsPage() {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,10 +50,26 @@ export default function ProductsPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        const token = getAccessToken();
+        if (!token) {
+          router.replace('/login');
+          return;
+        }
+
         setLoading(true);
-        const response = await fetch(`${apiBase}/products`);
+        const response = await fetch(`${apiBase}/products`, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
         
         if (!response.ok) {
+          if (response.status === 401) {
+            clearAccessToken();
+            router.replace('/login');
+            return;
+          }
           throw new Error(`Erreur API: ${response.status}`);
         }
         
@@ -65,7 +84,12 @@ export default function ProductsPage() {
     };
 
     fetchProducts();
-  }, [apiBase]);
+  }, [apiBase, router]);
+
+  const handleLogout = () => {
+    clearAccessToken();
+    router.push('/login');
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
@@ -101,17 +125,37 @@ export default function ProductsPage() {
     };
 
     try {
+      const token = getAccessToken();
+      if (!token) {
+        router.replace('/login');
+        return;
+      }
+
       const url = `${apiBase}/products/${editingId}`;
       const method = 'PUT';
 
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          clearAccessToken();
+          router.replace('/login');
+          return;
+        }
         throw new Error(`Erreur API: ${response.status}`);
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('Reponse API invalide (attendu JSON).');
       }
 
       const data = await response.json();
@@ -131,11 +175,26 @@ export default function ProductsPage() {
     }
 
     try {
+      const token = getAccessToken();
+      if (!token) {
+        router.replace('/login');
+        return;
+      }
+
       const response = await fetch(`${apiBase}/products/${productId}`, {
         method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          clearAccessToken();
+          router.replace('/login');
+          return;
+        }
         throw new Error(`Erreur API: ${response.status}`);
       }
 
@@ -151,49 +210,58 @@ export default function ProductsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-xl text-gray-600">Chargement des produits...</p>
+      <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+        <p className="text-xl text-zinc-400">Chargement des produits...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-zinc-950">
         <div className="text-red-600 text-xl">
           <p>Erreur: {error}</p>
-          <p className="text-sm mt-2">Assurez-vous que le serveur Laravel est en cours d'exécution sur http://localhost:8000</p>
+          <p className="text-sm mt-2">Assurez-vous que le serveur Laravel est en cours d&apos;exécution sur http://localhost:8000</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-zinc-950 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-12">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-4xl font-bold text-gray-900">Produits</h1>
-          <Link
-            href="/products/new"
-            className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700"
-          >
-            Ajouter un produit
-          </Link>
+          <h1 className="text-4xl font-bold text-zinc-100">Produits</h1>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="px-4 py-2 rounded-md border border-zinc-700 text-zinc-200"
+            >
+              Deconnexion
+            </button>
+            <Link
+              href="/products/new"
+              className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700"
+            >
+              Ajouter un produit
+            </Link>
+          </div>
         </div>
 
         {editingId && (
           <form
-            className="bg-white rounded-lg shadow-md p-6 grid gap-4 md:grid-cols-2"
+            className="bg-zinc-900 rounded-lg shadow-md p-6 grid gap-4 md:grid-cols-2"
             onSubmit={submitForm}
           >
             <div className="md:col-span-2">
-              <h2 className="text-2xl font-semibold text-gray-900">
+              <h2 className="text-2xl font-semibold text-zinc-100">
                 Modifier un produit
               </h2>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="name">
+              <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="name">
                 Nom
               </label>
               <input
@@ -202,13 +270,13 @@ export default function ProductsPage() {
                 value={form.name}
                 onChange={handleChange}
                 required
-                className="w-full rounded-md border border-gray-300 px-3 py-2"
+                className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
                 placeholder="Nom du produit"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="price">
+              <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="price">
                 Prix
               </label>
               <input
@@ -220,13 +288,13 @@ export default function ProductsPage() {
                 value={form.price}
                 onChange={handleChange}
                 required
-                className="w-full rounded-md border border-gray-300 px-3 py-2"
+                className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
                 placeholder="0.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="sku">
+              <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="sku">
                 SKU
               </label>
               <input
@@ -234,13 +302,13 @@ export default function ProductsPage() {
                 name="sku"
                 value={form.sku}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2"
+                className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
                 placeholder="SKU-001"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="quantity">
+              <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="quantity">
                 Quantite
               </label>
               <input
@@ -250,13 +318,13 @@ export default function ProductsPage() {
                 min="0"
                 value={form.quantity}
                 onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2"
+                className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
                 placeholder="0"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="description">
+              <label className="block text-sm font-semibold text-zinc-300 mb-1" htmlFor="description">
                 Description
               </label>
               <textarea
@@ -265,7 +333,7 @@ export default function ProductsPage() {
                 value={form.description}
                 onChange={handleChange}
                 rows={3}
-                className="w-full rounded-md border border-gray-300 px-3 py-2"
+                className="w-full rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 px-3 py-2"
                 placeholder="Description du produit"
               />
             </div>
@@ -281,7 +349,7 @@ export default function ProductsPage() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700"
+                className="px-4 py-2 rounded-md border border-zinc-700 text-zinc-200"
               >
                 Annuler
               </button>
@@ -296,21 +364,21 @@ export default function ProductsPage() {
         )}
 
         {products.length === 0 ? (
-          <p className="text-center text-gray-600 text-lg">Aucun produit disponible</p>
+          <p className="text-center text-zinc-400 text-lg">Aucun produit disponible</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => (
               <div
                 key={product.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 flex flex-col gap-4"
+                className="bg-zinc-900 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 flex flex-col gap-4"
               >
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-2xl font-bold text-zinc-100 mb-2">
                     {product.name}
                   </h2>
 
                   {product.description && (
-                    <p className="text-gray-600 mb-4 line-clamp-3">
+                    <p className="text-zinc-400 mb-4 line-clamp-3">
                       {product.description}
                     </p>
                   )}
@@ -337,7 +405,7 @@ export default function ProductsPage() {
                     <button
                       type="button"
                       onClick={() => handleEdit(product)}
-                      className="px-3 py-1 rounded-md border border-gray-300 text-gray-700"
+                      className="px-3 py-1 rounded-md border border-zinc-700 text-zinc-200"
                     >
                       Editer
                     </button>
