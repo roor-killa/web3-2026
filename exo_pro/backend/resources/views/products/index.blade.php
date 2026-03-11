@@ -1,3 +1,4 @@
+{{-- Fichier annote pour expliquer rapidement son role. --}}
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,14 +29,16 @@
                     <tr>
                         <td>{{ $product->id }}</td>
                         <td>{{ $product->name }}</td>
-                        <td>{{ $product->price }}€</td>
+                        <td>{{ $product->price }}â‚¬</td>
                         <td>{{ $product->description }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     @else
-        <p>Aucun produit trouvé.</p>
+        <p>Aucun produit trouvÃ©.</p>
     @endif
 </body>
 </html>
+
+

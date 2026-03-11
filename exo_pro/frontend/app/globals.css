@@ -1,3 +1,6 @@
+/* Frontend - commentaires simples en français.
+   Fichier CSS global : variables de thème, styles de base et import
+   de Tailwind. Ce fichier est chargé par le layout racine. */
 @import "tailwindcss";
 
 :root {

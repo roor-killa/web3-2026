@@ -2,25 +2,21 @@
 
 namespace Database\Factories;
 
+// Factory pour créer des utilisateurs fictifs en base (utilisé dans les tests
+// et les seeders). Définit les valeurs par défaut pour un `User`.
+
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
+
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
+    
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    
     public function definition(): array
     {
         return [
@@ -32,9 +28,7 @@ class UserFactory extends Factory
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
+    
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -42,3 +36,5 @@ class UserFactory extends Factory
         ]);
     }
 }
+
+

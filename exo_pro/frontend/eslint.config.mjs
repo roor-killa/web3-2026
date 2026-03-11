@@ -1,3 +1,5 @@
+// Frontend - commentaires simples en français.
+// Configuration ESLint pour le projet Next.js : règles et fichiers ignorés.
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";

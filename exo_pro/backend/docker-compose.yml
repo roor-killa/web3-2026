@@ -1,3 +1,4 @@
+﻿# Fichier YAML backend: commentaires simples en francais.
 services:
   app:
     image: php:8.3-cli
@@ -8,3 +9,4 @@ services:
     ports:
       - "8000:8000"
     command: php artisan serve --host=0.0.0.0 --port=8000
+

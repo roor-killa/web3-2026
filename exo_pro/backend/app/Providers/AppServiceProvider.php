@@ -2,23 +2,23 @@
 
 namespace App\Providers;
 
+// Provider principal de l'application. Sert à enregistrer et démarrer
+// des services partagés pour l'application (bindings, observers, etc.).
+
+
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
+    
     public function register(): void
     {
-        //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
+    
     public function boot(): void
     {
-        //
     }
 }
+
+

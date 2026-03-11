@@ -1,2 +1,5 @@
+﻿# Fichier robots backend: commentaires simples en francais.
 User-agent: *
 Disallow:
+
+

@@ -1,3 +1,4 @@
+﻿// Fichier JavaScript backend: commentaires simples en francais.
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
@@ -16,3 +17,5 @@ export default defineConfig({
         },
     },
 });
+
+

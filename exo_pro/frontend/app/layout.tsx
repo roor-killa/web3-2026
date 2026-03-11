@@ -1,3 +1,6 @@
+// Frontend - commentaires simples en français.
+// Layout racine Next.js : inclut la police, le CSS global, la barre de
+// navigation et le footer. `children` contient la page courante.
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -26,9 +29,6 @@ export default function RootLayout({
               </a>
               <a href="/products" className="hover:text-indigo-200 transition-colors">
                 Produits
-              </a>
-              <a href="#" className="hover:text-indigo-200 transition-colors">
-                Panier
               </a>
             </div>
           </div>

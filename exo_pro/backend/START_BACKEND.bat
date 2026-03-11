@@ -1,3 +1,4 @@
+﻿REM Script BAT backend: commentaires simples en francais.
 @echo off
 title Laravel Backend - E-Shop
 color 0A
@@ -19,3 +20,5 @@ echo.
 php artisan serve --port=8000
 
 pause
+
+
