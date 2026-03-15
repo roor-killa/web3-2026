@@ -11,9 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        if (! Schema::hasTable('products')) {
+            Schema::create('products', function (Blueprint $table) {
+                $table->id();
+                $table->string('titre');
+                $table->text('description')->nullable();
+                $table->decimal('prix', 8, 2);
+                $table->timestamps();
+            });
+
+            return;
+        }
+
+        Schema::table('products', function (Blueprint $table) {
+            if (! Schema::hasColumn('products', 'titre')) {
+                $table->string('titre');
+            }
+
+            if (! Schema::hasColumn('products', 'description')) {
+                $table->text('description')->nullable();
+            }
+
+            if (! Schema::hasColumn('products', 'prix')) {
+                $table->decimal('prix', 8, 2);
+            }
         });
     }
 

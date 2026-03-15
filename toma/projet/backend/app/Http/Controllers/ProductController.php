@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -42,8 +43,8 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         
         $validated = $request->validate([
-            'name' => 'sometimes|required|max:255',
-            'price' => 'sometimes|required|numeric|min:0',
+            'titre' => 'sometimes|required|max:255',
+            'prix' => 'sometimes|required|numeric|min:0',
             'description' => 'nullable|string'
         ]);
         
