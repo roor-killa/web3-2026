@@ -1,0 +1,129 @@
+version: '3.9'
+
+services:
+  # =====================================================
+  # 1️⃣ PostgreSQL Database
+  # =====================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: kiprix_postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-kiprix}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_DATABASE:-kiprix_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kiprix_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-kiprix}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =====================================================
+  # 2️⃣ FastAPI Backend (Python Scraper)
+  # =====================================================
+  fastapi:
+    build:
+      context: ./projet
+      dockerfile: Dockerfile
+    container_name: kiprix_fastapi
+    command: python -m uvicorn fastapi_app:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://${DB_USERNAME:-kiprix}:${DB_PASSWORD:-password}@postgres:5432/${DB_DATABASE:-kiprix_db}
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./projet:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - kiprix_network
+
+  # =====================================================
+  # 3️⃣ Laravel Backend
+  # =====================================================
+  laravel:
+    build:
+      context: ./back-laravel
+      dockerfile: Dockerfile
+    container_name: kiprix_laravel
+    command: >
+      sh -c "php artisan migrate --force &&
+             php artisan serve --host=0.0.0.0 --port=8001"
+    ports:
+      - "8001:8001"
+    environment:
+      APP_ENV: ${APP_ENV:-local}
+      APP_KEY: ${APP_KEY:-}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-kiprix_db}
+      DB_USERNAME: ${DB_USERNAME:-kiprix}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      FASTAPI_URL: http://fastapi:8000
+    volumes:
+      - ./back-laravel:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      fastapi:
+        condition: service_started
+    networks:
+      - kiprix_network
+
+  # =====================================================
+  # 4️⃣ Next.js Frontend (Admin Dashboard)
+  # =====================================================
+  nextjs:
+    build:
+      context: ./front-next
+      dockerfile: Dockerfile
+    container_name: kiprix_nextjs
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8001/api
+      NEXT_PUBLIC_FASTAPI_URL: http://localhost:8000
+    volumes:
+      - ./front-next:/app
+      - /app/node_modules
+    depends_on:
+      - laravel
+    networks:
+      - kiprix_network
+
+  # =====================================================
+  # 5️⃣ Nginx Reverse Proxy
+  # =====================================================
+  nginx:
+    build:
+      context: ./infra
+      dockerfile: Dockerfile
+    container_name: kiprix_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - laravel
+      - fastapi
+      - nextjs
+    networks:
+      - kiprix_network
+
+networks:
+  kiprix_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

@@ -1,0 +1,111 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: kiprix_postgres
+    environment:
+      POSTGRES_USER: kiprix
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: kiprix_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kiprix_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kiprix"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  fastapi:
+    image: python:3.11-slim
+    container_name: kiprix_fastapi
+    working_dir: /app
+    command: >
+      bash -c "pip install -q -r requirements.txt &&
+               python -m uvicorn fastapi_app:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./projet:/app
+    environment:
+      PYTHONUNBUFFERED: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - kiprix_network
+
+  # Laravel Backend (PHP 8.4 + extensions)
+  laravel:
+    build:
+      context: ./back-laravel
+      dockerfile: Dockerfile
+    container_name: kiprix_laravel
+    working_dir: /app
+    volumes:
+      - ./back-laravel:/app
+      - ./back-laravel/storage:/app/storage
+      - ./back-laravel/bootstrap/cache:/app/bootstrap/cache
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: kiprix_db
+      DB_USERNAME: kiprix
+      DB_PASSWORD: password
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - kiprix_network
+
+  # Nginx (Web Server)
+  nginx:
+    image: nginx:alpine
+    container_name: kiprix_nginx
+    ports:
+      - "80:80"
+      - "8000:8001"
+    volumes:
+      - ./back-laravel/public:/app/public:ro
+      - ./infra/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - laravel
+    networks:
+      - kiprix_network
+
+  # Next.js Frontend
+  nextjs:
+    build:
+      context: ./front-next
+      dockerfile: Dockerfile
+    container_name: kiprix_nextjs
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front-next:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+      NEXT_PUBLIC_FASTAPI_URL: http://localhost:8002
+      NODE_ENV: development
+    depends_on:
+      - laravel
+      - fastapi
+    networks:
+      - kiprix_network
+    restart: unless-stopped
+
+networks:
+  kiprix_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
