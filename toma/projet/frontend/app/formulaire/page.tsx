@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Container, Card, Button, Form, Alert } from "react-bootstrap";
 
-export default function Formulaire() {
+export default function FormulairePage() {
   const router = useRouter();
   const [newProduct, setNewProduct] = useState({ titre: "", description: "", prix: "" });
   const [error, setError] = useState<string | null>(null);
