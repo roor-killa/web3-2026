@@ -15,6 +15,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
+
+        // Alias pour le middleware admin
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\IsAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // Ce backend est une API pure → toujours renvoyer du JSON pour les erreurs d'auth
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e) {
+            return response()->json(['message' => 'Non authentifié. Token Bearer requis.'], 401);
+        });
     })->create();
