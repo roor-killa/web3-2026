@@ -1,9 +1,22 @@
 /**
- * Configuration API
+ * Configuration de l'URL de l'API.
+ *
+ * IMPORTANT : NEXT_PUBLIC_API_URL est injecté au BUILD time (côté serveur/SSR).
+ * Dans le navigateur, le conteneur 'laravel_nginx' est inconnu.
+ * → On utilise toujours localhost:8080 comme URL publique pour les requêtes client.
  */
 
+// URL accessible depuis le navigateur (votre Mac)
+const PUBLIC_API_URL = "http://localhost:8080/api";
+
+// URL interne Docker (pour SSR côté serveur uniquement)
+const INTERNAL_API_URL = process.env.NEXT_PUBLIC_API_URL
+  ? `${process.env.NEXT_PUBLIC_API_URL}/api`
+  : PUBLIC_API_URL;
+
+// On choisit l'URL selon le contexte d'exécution
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+  typeof window !== "undefined" ? PUBLIC_API_URL : INTERNAL_API_URL;
 
 export interface ApiResponse<T = any> {
   success?: boolean;

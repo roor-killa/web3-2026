@@ -52,188 +52,86 @@ export default function CreateProductPage() {
     return (
         <>
             <Navbar />
-            <div style={{
-                minHeight: '100vh',
-                background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
-                padding: '2rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}>
-            <div style={{
-                background: 'white',
-                padding: '2.5rem',
-                borderRadius: '1rem',
-                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                width: '100%',
-                maxWidth: '500px'
-            }}>
-                <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h1 style={{
-                        fontSize: '1.75rem',
-                        fontWeight: 'bold',
-                        color: '#1f2937'
-                    }}>
-                        Nouveau Produit
-                    </h1>
-                    <Link
-                        href="/products"
-                        style={{
-                            color: '#6b7280',
-                            textDecoration: 'none',
-                            fontSize: '0.875rem'
-                        }}
-                    >
-                        ✕ Annuler
-                    </Link>
+            <div className="min-h-screen flex items-center justify-center p-4" style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
+                <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            ➕ Nouveau Produit
+                        </h1>
+                        <Link
+                            href="/products"
+                            className="text-gray-500 hover:text-gray-700 text-lg font-semibold transition"
+                        >
+                            ✕
+                        </Link>
+                    </div>
+
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-6 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* Nom */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Nom du produit *
+                            </label>
+                            <input
+                                id="name"
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                                placeholder="Ex: MacBook Pro"
+                                className="input-field"
+                            />
+                        </div>
+
+                        {/* Prix */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Prix (€) *
+                            </label>
+                            <input
+                                id="price"
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                required
+                                placeholder="0.00"
+                                className="input-field"
+                            />
+                        </div>
+
+                        {/* Description */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Description
+                            </label>
+                            <textarea
+                                id="description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                rows={4}
+                                placeholder="Description détaillée du produit..."
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition resize-vertical"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full bg-gradient-primary text-white py-2 px-4 rounded-md font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        >
+                            {isLoading ? '⏳ Création en cours...' : '✅ Créer le produit'}
+                        </button>
+                    </form>
                 </div>
-
-                {error && (
-                    <div style={{
-                        padding: '0.75rem',
-                        marginBottom: '1.5rem',
-                        borderRadius: '0.5rem',
-                        backgroundColor: '#fee2e2',
-                        color: '#991b1b',
-                        fontSize: '0.875rem'
-                    }}>
-                        {error}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit}>
-                    {/* Nom */}
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label
-                            htmlFor="name"
-                            style={{
-                                display: 'block',
-                                fontSize: '0.875rem',
-                                fontWeight: '500',
-                                marginBottom: '0.5rem',
-                                color: '#374151'
-                            }}
-                        >
-                            Nom du produit
-                        </label>
-                        <input
-                            id="name"
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            placeholder="Ex: MacBook Pro"
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '0.5rem',
-                                fontSize: '1rem',
-                                outline: 'none',
-                                transition: 'all 0.2s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-                        />
-                    </div>
-
-                    {/* Prix */}
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label
-                            htmlFor="price"
-                            style={{
-                                display: 'block',
-                                fontSize: '0.875rem',
-                                fontWeight: '500',
-                                marginBottom: '0.5rem',
-                                color: '#374151'
-                            }}
-                        >
-                            Prix (€)
-                        </label>
-                        <input
-                            id="price"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            required
-                            placeholder="0.00"
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '0.5rem',
-                                fontSize: '1rem',
-                                outline: 'none',
-                                transition: 'all 0.2s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-                        />
-                    </div>
-
-                    {/* Description */}
-                    <div style={{ marginBottom: '2rem' }}>
-                        <label
-                            htmlFor="description"
-                            style={{
-                                display: 'block',
-                                fontSize: '0.875rem',
-                                fontWeight: '500',
-                                marginBottom: '0.5rem',
-                                color: '#374151'
-                            }}
-                        >
-                            Description
-                        </label>
-                        <textarea
-                            id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            rows={4}
-                            placeholder="Description détaillée du produit..."
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '0.5rem',
-                                fontSize: '1rem',
-                                resize: 'vertical',
-                                outline: 'none',
-                                transition: 'all 0.2s',
-                                fontFamily: 'inherit'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            backgroundColor: isLoading ? '#9ca3af' : '#667eea',
-                            color: 'white',
-                            fontWeight: '600',
-                            borderRadius: '0.5rem',
-                            border: 'none',
-                            cursor: isLoading ? 'not-allowed' : 'pointer',
-                            fontSize: '1rem',
-                            transition: 'background-color 0.2s',
-                            boxShadow: '0 4px 6px -1px rgba(102, 126, 234, 0.4)'
-                        }}
-                        onMouseEnter={(e) => !isLoading && (e.currentTarget.style.backgroundColor = '#5568d3')}
-                        onMouseLeave={(e) => !isLoading && (e.currentTarget.style.backgroundColor = '#667eea')}
-                    >
-                        {isLoading ? 'Création en cours...' : 'Créer le produit'}
-                    </button>
-                </form>
             </div>
-        </div>
         </>
     );
 }

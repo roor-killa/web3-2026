@@ -43,75 +43,25 @@ export default function RegisterForm() {
     }
   };
 
-  const inputStyle = {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #d1d5db',
-    borderRadius: '0.5rem',
-    fontSize: '1rem',
-    boxSizing: 'border-box' as const,
-    transition: 'border-color 0.2s',
-    outline: 'none' as const
-  };
-
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1rem'
-    }}>
-      <div style={{
-        background: 'white',
-        padding: '2.5rem',
-        borderRadius: '1rem',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        width: '100%',
-        maxWidth: '500px'
-      }}>
-        <h1 style={{
-          fontSize: '1.875rem',
-          fontWeight: 'bold',
-          color: '#1f2937',
-          marginBottom: '0.5rem',
-          textAlign: 'center'
-        }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
+      <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+        <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
           Créer un compte
         </h1>
-        <p style={{
-          textAlign: 'center',
-          color: '#6b7280',
-          marginBottom: '2rem',
-          fontSize: '0.875rem'
-        }}>
+        <p className="text-center text-gray-600 text-sm mb-6">
           Rejoignez notre plateforme
         </p>
 
         {error && (
-          <div style={{
-            background: '#fee2e2',
-            border: '1px solid #fecaca',
-            color: '#991b1b',
-            padding: '0.75rem 1rem',
-            borderRadius: '0.5rem',
-            marginBottom: '1.5rem',
-            fontSize: '0.875rem'
-          }}>
+          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-6 text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              fontWeight: '500',
-              color: '#374151',
-              marginBottom: '0.5rem'
-            }}>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nom complet
             </label>
             <input
@@ -122,20 +72,12 @@ export default function RegisterForm() {
               placeholder="Jean Dupont"
               value={formData.name}
               onChange={handleChange}
-              style={inputStyle}
-              onFocus={(e) => e.target.style.borderColor = '#667eea'}
-              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition"
             />
           </div>
 
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              fontWeight: '500',
-              color: '#374151',
-              marginBottom: '0.5rem'
-            }}>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
             <input
@@ -146,20 +88,12 @@ export default function RegisterForm() {
               placeholder="votre@email.com"
               value={formData.email}
               onChange={handleChange}
-              style={inputStyle}
-              onFocus={(e) => e.target.style.borderColor = '#667eea'}
-              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition"
             />
           </div>
 
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              fontWeight: '500',
-              color: '#374151',
-              marginBottom: '0.5rem'
-            }}>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Mot de passe
             </label>
             <input
@@ -171,27 +105,15 @@ export default function RegisterForm() {
               placeholder="••••••••"
               value={formData.password}
               onChange={handleChange}
-              style={inputStyle}
-              onFocus={(e) => e.target.style.borderColor = '#667eea'}
-              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition"
             />
-            <p style={{
-              fontSize: '0.75rem',
-              color: '#9ca3af',
-              marginTop: '0.25rem'
-            }}>
+            <p className="text-xs text-gray-500 mt-1">
               Minimum 8 caractères
             </p>
           </div>
 
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '0.875rem',
-              fontWeight: '500',
-              color: '#374151',
-              marginBottom: '0.5rem'
-            }}>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Confirmer le mot de passe
             </label>
             <input
@@ -203,46 +125,22 @@ export default function RegisterForm() {
               placeholder="••••••••"
               value={formData.password_confirmation}
               onChange={handleChange}
-              style={inputStyle}
-              onFocus={(e) => e.target.style.borderColor = '#667eea'}
-              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            style={{
-              background: 'linear-gradient(to right, #667eea 0%, #764ba2 100%)',
-              color: 'white',
-              padding: '0.75rem 1.5rem',
-              borderRadius: '0.5rem',
-              border: 'none',
-              fontWeight: '600',
-              fontSize: '1rem',
-              cursor: isLoading ? 'not-allowed' : 'pointer',
-              opacity: isLoading ? 0.7 : 1,
-              transition: 'opacity 0.2s'
-            }}
-            onMouseEnter={(e) => !isLoading && (e.currentTarget.style.opacity = '0.9')}
-            onMouseLeave={(e) => !isLoading && (e.currentTarget.style.opacity = '1')}
+            className="w-full bg-gradient-primary text-white py-2 px-4 rounded-md font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             {isLoading ? 'Enregistrement en cours...' : 'S\'enregistrer'}
           </button>
         </form>
 
-        <div style={{
-          marginTop: '1.5rem',
-          textAlign: 'center',
-          fontSize: '0.875rem',
-          color: '#6b7280'
-        }}>
+        <div className="mt-6 text-center text-sm text-gray-600">
           Vous avez déjà un compte?{' '}
-          <Link href="/login" style={{
-            color: '#667eea',
-            textDecoration: 'none',
-            fontWeight: '600'
-          }}>
+          <Link href="/login" className="text-primary font-semibold hover:text-primary-dark transition">
             Se connecter
           </Link>
         </div>

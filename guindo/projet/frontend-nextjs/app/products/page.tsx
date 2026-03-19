@@ -14,82 +14,71 @@ interface Product {
     updated_at: string;
 }
 
-/**
- * Page d'affichage de la liste des produits.
- * Récupère les données depuis l'API Laravel et gère les opérations CRUD de base.
- */
 export default function ProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [deleting, setDeleting] = useState<number | null>(null);
+    const [search, setSearch] = useState('');
 
-    // Chargement initial des produits au montage du composant
     useEffect(() => {
         fetchProducts();
     }, []);
 
-    /**
-     * Récupère la liste complète des produits via l'API.
-     */
     const fetchProducts = async () => {
         try {
             const data = await apiGet<ApiResponse<Product[]>>('/products');
-
             if (data.success && data.data) {
                 setProducts(data.data);
             } else {
                 setError('Erreur lors du chargement des produits');
             }
-        } catch (err) {
+        } catch {
             setError('Impossible de se connecter au serveur');
-            console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
-    /**
-     * Supprime un produit après confirmation utilisateur.
-     * @param id Identifiant du produit à supprimer
-     */
     const deleteProduct = async (id: number) => {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
-            return;
-        }
-
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) return;
         setDeleting(id);
         try {
             const data = await apiDelete<ApiResponse>(`/products/${id}`);
-
             if (data.success) {
-                // Mise à jour de l'état local pour refléter la suppression sans recharger la page
                 setProducts(products.filter(p => p.id !== id));
             } else {
                 alert('Erreur lors de la suppression');
             }
-        } catch (err) {
+        } catch {
             alert('Erreur de connexion');
-            console.error(err);
         } finally {
             setDeleting(null);
         }
     };
 
-    // État de chargement initial
+    const filtered = products.filter(p =>
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        (p.description || '').toLowerCase().includes(search.toLowerCase())
+    );
+
     if (loading) {
         return (
             <>
                 <Navbar />
-                <div style={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
-                }}>
-                    <div style={{ color: 'white', fontSize: '1.5rem' }}>
-                        Chargement des produits...
+                <div className="page-light section">
+                    <div className="container-app">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {[1,2,3,4,5,6].map(i => (
+                                <div key={i} className="card p-6">
+                                    <div className="skeleton h-6 w-3/4 mb-3" />
+                                    <div className="skeleton h-4 w-full mb-2" />
+                                    <div className="skeleton h-4 w-2/3 mb-6" />
+                                    <div className="skeleton h-8 w-1/3 mb-4" />
+                                    <div className="skeleton h-10 w-full" />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </>
@@ -100,22 +89,14 @@ export default function ProductsPage() {
         return (
             <>
                 <Navbar />
-                <div style={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)'
-                }}>
-                    <div style={{
-                        background: 'white',
-                        padding: '2rem',
-                        borderRadius: '1rem',
-                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-                        textAlign: 'center'
-                    }}>
-                        <h2 style={{ color: '#dc2626', marginBottom: '1rem' }}>Erreur</h2>
-                        <p style={{ color: '#6b7280' }}>{error}</p>
+                <div className="page-light flex items-center justify-center section">
+                    <div className="card p-10 text-center max-w-md w-full animate-scale-in">
+                        <div className="text-5xl mb-4">❌</div>
+                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Connexion impossible</h2>
+                        <p className="text-slate-500 mb-6">{error}</p>
+                        <button onClick={fetchProducts} className="btn-primary">
+                            🔄 Réessayer
+                        </button>
                     </div>
                 </div>
             </>
@@ -125,258 +106,128 @@ export default function ProductsPage() {
     return (
         <>
             <Navbar />
-            <div style={{
-                minHeight: '100vh',
-                background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
-                padding: '3rem 1rem'
-            }}>
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                {/* Header with Action */}
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '3rem',
-                    flexWrap: 'wrap',
-                    gap: '1rem'
-                }}>
-                    <div>
-                        <h1 style={{
-                            fontSize: '3rem',
-                            fontWeight: 'bold',
-                            color: 'white',
-                            marginBottom: '0.5rem',
-                            lineHeight: '1.2'
-                        }}>
-                            Nos Produits
-                        </h1>
-                        <p style={{
-                            fontSize: '1.25rem',
-                            color: 'rgba(255, 255, 255, 0.9)'
-                        }}>
-                            Découvrez notre sélection de {products.length} produits
-                        </p>
-                    </div>
-
-                    <Link
-                        href="/products/create"
-                        style={{
-                            backgroundColor: 'white',
-                            color: '#667eea',
-                            padding: '0.75rem 1.5rem',
-                            borderRadius: '0.5rem',
-                            fontWeight: '600',
-                            textDecoration: 'none',
-                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                            transition: 'transform 0.2s',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.5rem'
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-                    >
-                        <span style={{ fontSize: '1.25rem' }}>+</span> Ajouter un produit
-                    </Link>
-                </div>
-
-                {/* Products Grid */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                    gap: '2rem'
-                }}>
-                    {products.map((product) => (
-                        <div
-                            key={product.id}
-                            style={{
-                                background: 'white',
-                                borderRadius: '1rem',
-                                padding: '1.5rem',
-                                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                                transition: 'transform 0.2s, box-shadow 0.2s',
-                                cursor: 'pointer'
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'translateY(-4px)';
-                                e.currentTarget.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'translateY(0)';
-                                e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-                            }}
-                        >
-                            {/* Product Header */}
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'start',
-                                marginBottom: '1rem'
-                            }}>
-                                <h3 style={{
-                                    fontSize: '1.5rem',
-                                    fontWeight: '700',
-                                    color: '#1f2937',
-                                    margin: 0
-                                }}>
-                                    {product.name}
-                                </h3>
-                                <span style={{
-                                    backgroundColor: '#667eea',
-                                    color: 'white',
-                                    padding: '0.25rem 0.75rem',
-                                    borderRadius: '9999px',
-                                    fontSize: '0.875rem',
-                                    fontWeight: '600',
-                                    whiteSpace: 'nowrap'
-                                }}>
-                                    #{product.id}
-                                </span>
+            <div className="page-light">
+                <div className="section">
+                    <div className="container-app">
+                        {/* Header */}
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 animate-fade-in">
+                            <div>
+                                <h1 className="page-title flex items-center gap-3">
+                                    <span className="text-4xl">📦</span>
+                                    Nos Produits
+                                </h1>
+                                <p className="page-subtitle">
+                                    {filtered.length} produit{filtered.length !== 1 ? 's' : ''} disponible{filtered.length !== 1 ? 's' : ''}
+                                </p>
                             </div>
+                            <Link href="/products/create" className="btn-primary shrink-0">
+                                ➕ Ajouter un produit
+                            </Link>
+                        </div>
 
-                            {/* Description */}
-                            <p style={{
-                                color: '#6b7280',
-                                marginBottom: '1.5rem',
-                                lineHeight: '1.6',
-                                minHeight: '3rem'
-                            }}>
-                                {product.description || 'Aucune description disponible'}
-                            </p>
-
-                            {/* Price */}
-                            <div style={{
-                                borderTop: '1px solid #e5e7eb',
-                                paddingTop: '1rem',
-                                marginBottom: '1rem'
-                            }}>
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center'
-                                }}>
-                                    <span style={{
-                                        fontSize: '0.875rem',
-                                        color: '#6b7280',
-                                        fontWeight: '500'
-                                    }}>
-                                        Prix
-                                    </span>
-                                    <span style={{
-                                        fontSize: '1.75rem',
-                                        fontWeight: 'bold',
-                                        color: '#667eea'
-                                    }}>
-                                        {parseFloat(product.price).toFixed(2)}€
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Action Buttons */}
-                            <div style={{
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                gap: '0.5rem',
-                                borderTop: '1px solid #e5e7eb',
-                                paddingTop: '1rem'
-                            }}>
-                                <Link
-                                    href={`/products/${product.id}`}
-                                    style={{
-                                        flex: '1 1 100%',
-                                        backgroundColor: '#f3f4f6',
-                                        color: '#374151',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '0.375rem',
-                                        textDecoration: 'none',
-                                        textAlign: 'center',
-                                        fontWeight: '600',
-                                        fontSize: '0.875rem',
-                                        transition: 'all 0.2s',
-                                        border: '1px solid #d1d5db',
-                                        marginBottom: '0.5rem'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = '#e5e7eb';
-                                        e.currentTarget.style.borderColor = '#667eea';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = '#f3f4f6';
-                                        e.currentTarget.style.borderColor = '#d1d5db';
-                                    }}
-                                >
-                                    🔍 Voir Détails
-                                </Link>
-                                <Link
-                                    href={`/products/edit/${product.id}`}
-                                    style={{
-                                        flex: 1,
-                                        backgroundColor: '#667eea',
-                                        color: 'white',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '0.375rem',
-                                        textDecoration: 'none',
-                                        textAlign: 'center',
-                                        fontWeight: '500',
-                                        fontSize: '0.875rem',
-                                        transition: 'background-color 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5568d3'}
-                                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#667eea'}
-                                >
-                                    ✏️ Modifier
-                                </Link>
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        deleteProduct(product.id);
-                                    }}
-                                    disabled={deleting === product.id}
-                                    style={{
-                                        flex: 1,
-                                        backgroundColor: deleting === product.id ? '#d1d5db' : '#dc2626',
-                                        color: 'white',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '0.375rem',
-                                        border: 'none',
-                                        fontWeight: '500',
-                                        fontSize: '0.875rem',
-                                        cursor: deleting === product.id ? 'not-allowed' : 'pointer',
-                                        transition: 'background-color 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        if (deleting !== product.id) {
-                                            e.currentTarget.style.backgroundColor = '#b91c1c';
-                                        }
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        if (deleting !== product.id) {
-                                            e.currentTarget.style.backgroundColor = '#dc2626';
-                                        }
-                                    }}
-                                >
-                                    {deleting === product.id ? '⏳ Suppression...' : '🗑️ Supprimer'}
-                                </button>
+                        {/* Search bar */}
+                        <div className="mb-8 animate-fade-in">
+                            <div className="relative max-w-md">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+                                <input
+                                    type="text"
+                                    placeholder="Rechercher un produit..."
+                                    value={search}
+                                    onChange={e => setSearch(e.target.value)}
+                                    className="input-field pl-11 shadow-sm"
+                                />
                             </div>
                         </div>
-                    ))}
-                </div>
 
-                {/* Empty State */}
-                {products.length === 0 && (
-                    <div style={{
-                        textAlign: 'center',
-                        padding: '4rem 2rem',
-                        background: 'white',
-                        borderRadius: '1rem'
-                    }}>
-                        <h3 style={{ color: '#6b7280', fontSize: '1.25rem' }}>
-                            Aucun produit disponible
-                        </h3>
+                        {/* Empty state */}
+                        {filtered.length === 0 && (
+                            <div className="card p-16 text-center animate-scale-in">
+                                <div className="text-6xl mb-4">📭</div>
+                                <h3 className="text-xl font-bold text-slate-700 mb-2">
+                                    {search ? 'Aucun résultat' : 'Aucun produit'}
+                                </h3>
+                                <p className="text-slate-500 mb-6">
+                                    {search ? `Aucun produit ne correspond à "${search}"` : 'Commencez par créer votre premier produit'}
+                                </p>
+                                {!search && (
+                                    <Link href="/products/create" className="btn-primary inline-flex">
+                                        ➕ Créer un produit
+                                    </Link>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Products grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+                            {filtered.map((product) => (
+                                <div
+                                    key={product.id}
+                                    className="card-hover flex flex-col animate-fade-in"
+                                >
+                                    {/* Color bar */}
+                                    <div className="h-1.5 bg-gradient-primary rounded-t-2xl" />
+
+                                    <div className="p-6 flex flex-col flex-1">
+                                        {/* Top row */}
+                                        <div className="flex justify-between items-start gap-3 mb-3">
+                                            <h3 className="text-lg font-bold text-slate-900 line-clamp-2 flex-1">
+                                                {product.name}
+                                            </h3>
+                                            <span className="badge-info shrink-0">#{product.id}</span>
+                                        </div>
+
+                                        {/* Description */}
+                                        <p className="text-slate-500 text-sm line-clamp-3 flex-1 mb-4">
+                                            {product.description || 'Aucune description disponible.'}
+                                        </p>
+
+                                        {/* Price */}
+                                        <div className="flex items-center justify-between py-3 border-t border-slate-100 mb-4">
+                                            <span className="text-sm text-slate-500 font-medium">Prix</span>
+                                            <span className="text-2xl font-extrabold text-primary-600">
+                                                {parseFloat(product.price).toFixed(2)}<span className="text-lg">€</span>
+                                            </span>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="space-y-2">
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Link
+                                                    href={`/products/${product.id}`}
+                                                    className="btn btn-ghost btn-sm border border-slate-200 text-slate-600 hover:border-slate-300 justify-center"
+                                                >
+                                                    🔍 Détails
+                                                </Link>
+                                                <Link
+                                                    href={`/products/edit/${product.id}`}
+                                                    className="btn btn-sm bg-primary-500 text-white hover:bg-primary-600 justify-center"
+                                                >
+                                                    ✏️ Modifier
+                                                </Link>
+                                            </div>
+                                            <button
+                                                onClick={() => deleteProduct(product.id)}
+                                                disabled={deleting === product.id}
+                                                className="btn-danger btn-sm w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {deleting === product.id ? (
+                                                    <>
+                                                        <svg className="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                                        </svg>
+                                                        Suppression...
+                                                    </>
+                                                ) : '🗑️ Supprimer'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                )}
+                </div>
             </div>
-        </div>
         </>
     );
 }

@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { logout } from '@/lib/auth';
 
 export default function Navbar() {
     const router = useRouter();
+    const pathname = usePathname();
 
     const handleLogout = async () => {
         try {
@@ -16,99 +17,56 @@ export default function Navbar() {
         }
     };
 
+    const navLinks = [
+        { href: '/products', label: 'Produits', icon: '📦' },
+        { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+    ];
+
     return (
-        <nav style={{
-            background: 'linear-gradient(to right, #667eea 0%, #764ba2 100%)',
-            padding: '0.75rem 2rem',
-            height: 'auto',
-            minHeight: '70px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)',
-            position: 'sticky',
-            top: 0,
-            zIndex: 50
-        }}>
-            {/* Logo */}
-            <Link href="/products" style={{
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                color: 'white',
-                fontSize: '1.5rem',
-                fontWeight: 'bold'
-            }}>
-                <span style={{ fontSize: '1.75rem' }}>📦</span>
-                WebStore
-            </Link>
+        <nav className="sticky top-0 z-50 glass-dark border-b border-white/10 shadow-glass">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-16">
 
-            {/* Menu */}
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1.5rem'
-            }}>
-                <Link href="/products" style={{
-                    textDecoration: 'none',
-                    color: 'white',
-                    fontWeight: '500',
-                    fontSize: '0.95rem',
-                    padding: '0.5rem 0.75rem',
-                    borderRadius: '0.375rem',
-                    transition: 'background-color 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                >
-                    📋 Produits
-                </Link>
+                    {/* Logo */}
+                    <Link href="/products" className="flex items-center gap-3 group">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:shadow-glow-lg transition-all duration-300 group-hover:scale-105">
+                            <span className="text-lg">🛒</span>
+                        </div>
+                        <span className="font-extrabold text-white text-lg tracking-tight hidden sm:block">
+                            Web<span className="text-gradient bg-clip-text bg-gradient-to-r from-primary-300 to-accent-500" style={{ WebkitTextFillColor: 'transparent', background: 'linear-gradient(90deg, #a5b4fc, #67e8f9)', WebkitBackgroundClip: 'text' }}>Store</span>
+                        </span>
+                    </Link>
 
-                {/* <Link href="/products/create" style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    color: 'white',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '0.375rem',
-                    textDecoration: 'none',
-                    fontWeight: '500',
-                    fontSize: '0.95rem',
-                    transition: 'background-color 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    border: '1px solid rgba(255, 255, 255, 0.3)'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
-                >
-                    ➕ Ajouter
-                </Link> */}
+                    {/* Nav Links */}
+                    <div className="flex items-center gap-1">
+                        {navLinks.map(({ href, label, icon }) => {
+                            const isActive = pathname === href || pathname?.startsWith(href + '/');
+                            return (
+                                <Link
+                                    key={href}
+                                    href={href}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${isActive
+                                            ? 'bg-white/20 text-white shadow-sm'
+                                            : 'text-white/70 hover:text-white hover:bg-white/10'
+                                        }`}
+                                >
+                                    <span>{icon}</span>
+                                    <span className="hidden sm:block">{label}</span>
+                                </Link>
+                            );
+                        })}
 
-                <button
-                    onClick={handleLogout}
-                    style={{
-                        backgroundColor: '#ff6b6b',
-                        color: 'white',
-                        border: 'none',
-                        padding: '0.5rem 1rem',
-                        borderRadius: '0.375rem',
-                        cursor: 'pointer',
-                        fontWeight: '500',
-                        fontSize: '0.95rem',
-                        transition: 'background-color 0.2s',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#ef5350'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ff6b6b'}
-                >
-                    🚪 Déconnexion
-                </button>
+                        <div className="w-px h-6 bg-white/20 mx-2" />
+
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-red-500/80 hover:bg-red-500 text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md"
+                        >
+                            <span>🚪</span>
+                            <span className="hidden sm:block">Déconnexion</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </nav>
     );

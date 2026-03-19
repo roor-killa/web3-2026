@@ -13,10 +13,6 @@ interface Product {
     description: string;
 }
 
-/**
- * Page de modification d'un produit existant.
- * Charge les données actuelles puis permet de les mettre à jour via l'API.
- */
 export default function EditProductPage() {
     const router = useRouter();
     const params = useParams();
@@ -26,43 +22,34 @@ export default function EditProductPage() {
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingProduct, setIsLoadingProduct] = useState(true);
 
-    // Charge les données du produit à modifier au montage
     useEffect(() => {
-        /**
-         * Récupère les données actuelles du produit.
-         */
         const fetchProduct = async () => {
             try {
                 const data = await apiGet<ApiResponse<Product>>(`/products/${productId}`);
-
                 if (data.success && data.data) {
-                    const product: Product = data.data;
-                    setName(product.name);
-                    setPrice(product.price);
-                    setDescription(product.description);
+                    setName(data.data.name);
+                    setPrice(data.data.price);
+                    setDescription(data.data.description);
                 } else {
                     setError('Produit non trouvé');
                 }
-            } catch (err) {
+            } catch {
                 setError('Impossible de charger le produit');
-                console.error(err);
             } finally {
                 setIsLoadingProduct(false);
             }
         };
-
         fetchProduct();
     }, [productId]);
 
-    /**
-     * Gère la mise à jour du produit via une requête PUT.
-     */
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
+        setSuccess(false);
         setIsLoading(true);
 
         try {
@@ -73,14 +60,13 @@ export default function EditProductPage() {
             });
 
             if (data.success) {
-                router.push('/products');
-                router.refresh();
+                setSuccess(true);
+                setTimeout(() => router.push('/products'), 1200);
             } else {
-                setError(data.message || 'Erreur lors de la modification du produit');
+                setError(data.message || 'Erreur lors de la modification');
             }
-        } catch (err) {
+        } catch {
             setError('Impossible de se connecter au serveur');
-            console.error(err);
         } finally {
             setIsLoading(false);
         }
@@ -90,15 +76,13 @@ export default function EditProductPage() {
         return (
             <>
                 <Navbar />
-                <div style={{
-                    minHeight: '100vh',
-                    background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}>
-                    <div style={{ color: 'white', fontSize: '1.5rem' }}>
-                        Chargement du produit...
+                <div className="page-gradient flex items-center justify-center section">
+                    <div className="glass rounded-2xl px-10 py-8 flex flex-col items-center gap-4 text-white animate-pulse-slow">
+                        <svg className="animate-spin h-8 w-8" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        </svg>
+                        <span className="font-semibold text-lg">Chargement du produit...</span>
                     </div>
                 </div>
             </>
@@ -108,192 +92,128 @@ export default function EditProductPage() {
     return (
         <>
             <Navbar />
-            <div style={{
-            minHeight: '100vh',
-            background: 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)',
-            padding: '2rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }}>
-            <div style={{
-                background: 'white',
-                padding: '2.5rem',
-                borderRadius: '1rem',
-                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                width: '100%',
-                maxWidth: '500px'
-            }}>
-                <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h1 style={{
-                        fontSize: '1.75rem',
-                        fontWeight: 'bold',
-                        color: '#1f2937'
-                    }}>
-                        Modifier le Produit
-                    </h1>
-                    <Link
-                        href="/products"
-                        style={{
-                            color: '#6b7280',
-                            textDecoration: 'none',
-                            fontSize: '0.875rem',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        ✕ Annuler
+            <div className="page-gradient flex items-center justify-center p-6 relative overflow-hidden">
+                {/* Background */}
+                <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
+                <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="w-full max-w-lg relative animate-slide-up">
+                    {/* Back link */}
+                    <Link href="/products" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium mb-6 transition">
+                        ← Retour aux produits
                     </Link>
+
+                    <div className="card p-8">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-7">
+                            <div>
+                                <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+                                    <span>✏️</span> Modifier le Produit
+                                </h1>
+                                <p className="text-slate-500 text-sm mt-1">ID #{productId}</p>
+                            </div>
+                            <Link href="/products" className="text-slate-400 hover:text-slate-600 transition text-sm font-medium">
+                                Annuler ✕
+                            </Link>
+                        </div>
+
+                        {/* Alerts */}
+                        {error && (
+                            <div className="alert-error mb-5 animate-fade-in">
+                                <span>⚠️</span>
+                                <span>{error}</span>
+                            </div>
+                        )}
+                        {success && (
+                            <div className="alert-success mb-5 animate-scale-in">
+                                <span>✅</span>
+                                <span>Produit modifié avec succès ! Redirection...</span>
+                            </div>
+                        )}
+
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            {/* Name */}
+                            <div>
+                                <label htmlFor="name" className="input-label">
+                                    Nom du produit
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">📝</span>
+                                    <input
+                                        id="name"
+                                        type="text"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        required
+                                        placeholder="Ex: MacBook Pro"
+                                        className="input-field pl-9"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Price */}
+                            <div>
+                                <label htmlFor="price" className="input-label">
+                                    Prix (€)
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">€</span>
+                                    <input
+                                        id="price"
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={price}
+                                        onChange={(e) => setPrice(e.target.value)}
+                                        required
+                                        placeholder="0.00"
+                                        className="input-field pl-8"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Description */}
+                            <div>
+                                <label htmlFor="description" className="input-label">
+                                    Description
+                                </label>
+                                <textarea
+                                    id="description"
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    rows={4}
+                                    placeholder="Description détaillée du produit..."
+                                    className="input-field resize-none"
+                                />
+                                <p className="text-xs text-slate-400 mt-1">{description.length} caractères</p>
+                            </div>
+
+                            {/* Buttons */}
+                            <div className="flex gap-3 pt-2">
+                                <Link href="/products" className="btn-secondary flex-1 justify-center py-3">
+                                    Annuler
+                                </Link>
+                                <button
+                                    type="submit"
+                                    disabled={isLoading || success}
+                                    className="btn-primary flex-1 justify-center py-3 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                            </svg>
+                                            Enregistrement...
+                                        </>
+                                    ) : success ? '✅ Enregistré!' : '💾 Enregistrer'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
-                {error && (
-                    <div style={{
-                        padding: '0.75rem',
-                        marginBottom: '1.5rem',
-                        borderRadius: '0.5rem',
-                        backgroundColor: '#fee2e2',
-                        color: '#991b1b',
-                        fontSize: '0.875rem'
-                    }}>
-                        {error}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit}>
-                    {/* Nom */}
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label
-                            htmlFor="name"
-                            style={{
-                                display: 'block',
-                                fontSize: '0.875rem',
-                                fontWeight: '500',
-                                marginBottom: '0.5rem',
-                                color: '#374151'
-                            }}
-                        >
-                            Nom du produit
-                        </label>
-                        <input
-                            id="name"
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            placeholder="Ex: MacBook Pro"
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '0.5rem',
-                                fontSize: '1rem',
-                                boxSizing: 'border-box',
-                                outline: 'none',
-                                transition: 'all 0.2s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-                        />
-                    </div>
-
-                    {/* Prix */}
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <label
-                            htmlFor="price"
-                            style={{
-                                display: 'block',
-                                fontSize: '0.875rem',
-                                fontWeight: '500',
-                                marginBottom: '0.5rem',
-                                color: '#374151'
-                            }}
-                        >
-                            Prix (€)
-                        </label>
-                        <input
-                            id="price"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            required
-                            placeholder="0.00"
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '0.5rem',
-                                fontSize: '1rem',
-                                boxSizing: 'border-box',
-                                outline: 'none',
-                                transition: 'all 0.2s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-                        />
-                    </div>
-
-                    {/* Description */}
-                    <div style={{ marginBottom: '2rem' }}>
-                        <label
-                            htmlFor="description"
-                            style={{
-                                display: 'block',
-                                fontSize: '0.875rem',
-                                fontWeight: '500',
-                                marginBottom: '0.5rem',
-                                color: '#374151'
-                            }}
-                        >
-                            Description
-                        </label>
-                        <textarea
-                            id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            rows={4}
-                            placeholder="Description détaillée du produit..."
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '0.5rem',
-                                fontSize: '1rem',
-                                boxSizing: 'border-box',
-                                resize: 'vertical',
-                                outline: 'none',
-                                transition: 'all 0.2s',
-                                fontFamily: 'inherit'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                            onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        style={{
-                            width: '100%',
-                            padding: '0.75rem',
-                            backgroundColor: isLoading ? '#9ca3af' : '#667eea',
-                            color: 'white',
-                            fontWeight: '600',
-                            borderRadius: '0.5rem',
-                            border: 'none',
-                            cursor: isLoading ? 'not-allowed' : 'pointer',
-                            fontSize: '1rem',
-                            transition: 'background-color 0.2s',
-                            boxShadow: '0 4px 6px -1px rgba(102, 126, 234, 0.4)'
-                        }}
-                        onMouseEnter={(e) => !isLoading && (e.currentTarget.style.backgroundColor = '#5568d3')}
-                        onMouseLeave={(e) => !isLoading && (e.currentTarget.style.backgroundColor = '#667eea')}
-                    >
-                        {isLoading ? 'Modification en cours...' : 'Modifier le produit'}
-                    </button>
-                </form>
             </div>
-        </div>
         </>
     );
 }
