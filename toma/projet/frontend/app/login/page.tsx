@@ -1,14 +1,37 @@
 "use client";
 
+import { useState, type FormEvent } from "react";
 import { Container, Card, Form, Button } from "react-bootstrap";
 
 export default function LoginPage() {
 
-  function Login(){
+  const [email,setEmail] = useState('')
+  const [mdp,setMdp] = useState('')
+
+  function Login(e: FormEvent<HTMLFormElement>){
+    e.preventDefault()
     console.log('Essayer de log in')
-    fetch('http://http://127.0.0.1:8000/auth/login',)
-    .then(response => response.json())
-    .then(data => {console.log(data)})
+    console.log(email,mdp)
+    const formBody = new URLSearchParams({
+      username: email,
+      password: mdp,
+    }).toString();
+
+    fetch('http://127.0.0.1:8000/auth/login', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formBody,
+    })
+    .then(async (response) => {
+      const data = await response.json().catch(() => null);
+      console.log("status", response.status, data);
+      return data;
+    })
+    .catch((error) => {
+      console.error("Login request failed:", error);
+    })
   }
  
   return (
@@ -23,19 +46,22 @@ export default function LoginPage() {
                 required
                 type="email"
                 placeholder="nom@main.com"
-
+                onChange={(e) => setEmail(e.target.value)}
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Mot de passe</Form.Label>
               <Form.Control
+                required
                 type="password"
+                onChange={(e) => setMdp(e.target.value)}
               />
             </Form.Group>
-          </Form>
 
-          <Button type="submit">Login</Button>
+            <Button type="submit">Login</Button>
+          </Form>
+          
         </Card.Body>
       </Card>
     </Container>
