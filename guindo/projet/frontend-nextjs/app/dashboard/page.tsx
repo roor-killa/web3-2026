@@ -1,18 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  getDashboardStats,
-  getScrapeUrls,
-  addScrapeUrl,
-  deleteScrapeUrl,
-  toggleScrapeUrl,
-  DashboardStats,
-  ScrapeUrl,
-  getFastapiToken,
-} from "@/lib/fastapi";
+import { getDashboardStats, getScrapeUrls, addScrapeUrl, deleteScrapeUrl, toggleScrapeUrl, DashboardStats, ScrapeUrl, getFastapiToken } from "@/lib/fastapi";
 import { useRouter } from "next/navigation";
-// import Navbar from "@/components/Navbar";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -25,23 +15,16 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!getFastapiToken()) {
-      router.push("/login");
-      return;
-    }
+    if (!getFastapiToken()) { router.push("/dashboard/login"); return; }
     fetchData();
   }, []);
 
   const fetchData = async () => {
     try {
       const [s, u] = await Promise.all([getDashboardStats(), getScrapeUrls()]);
-      setStats(s);
-      setUrls(u);
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
+      setStats(s); setUrls(u);
+    } catch (e: any) { setError(e.message); }
+    finally { setLoading(false); }
   };
 
   const handleAdd = async () => {
@@ -49,247 +32,206 @@ export default function DashboardPage() {
     setAdding(true);
     try {
       await addScrapeUrl(newUrl, newLabel || undefined);
-      setNewUrl("");
-      setNewLabel("");
+      setNewUrl(""); setNewLabel("");
       fetchData();
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setAdding(false);
-    }
-  };
-
-  const handleDelete = async (id: number) => {
-    await deleteScrapeUrl(id);
-    fetchData();
-  };
-
-  const handleToggle = async (id: number, actif: boolean) => {
-    await toggleScrapeUrl(id, !actif);
-    fetchData();
+    } catch (e: any) { setError(e.message); }
+    finally { setAdding(false); }
   };
 
   const statCards = stats ? [
-    {
-      label: 'URLs Enregistrées',
-      value: stats.total_urls,
-      icon: '🔗',
-      gradient: 'from-primary-500 to-primary-600',
-      bg: 'bg-primary-50',
-      text: 'text-primary-700',
-      border: 'border-primary-100',
-    },
-    {
-      label: 'URLs Actives',
-      value: stats.urls_actives,
-      icon: '✅',
-      gradient: 'from-emerald-500 to-teal-500',
-      bg: 'bg-emerald-50',
-      text: 'text-emerald-700',
-      border: 'border-emerald-100',
-    },
-    {
-      label: 'Données Récupérées',
-      value: stats.total_donnees,
-      icon: '📦',
-      gradient: 'from-violet-500 to-purple-600',
-      bg: 'bg-violet-50',
-      text: 'text-violet-700',
-      border: 'border-violet-100',
-    },
+    { label: "URLs enregistrées", value: stats.total_urls, icon: "🔗", color: "#6366f1", glow: "rgba(99,102,241,0.3)" },
+    { label: "URLs actives", value: stats.urls_actives, icon: "✅", color: "#10b981", glow: "rgba(16,185,129,0.3)" },
+    { label: "Données récupérées", value: stats.total_donnees, icon: "📦", color: "#8b5cf6", glow: "rgba(139,92,246,0.3)" },
   ] : [];
 
-  if (loading) {
-    return (
-      <>
-        {/* <Navbar /> */}
-        <div className="page-light section">
-          <div className="container-app">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {[1, 2, 3].map(i => <div key={i} className="card p-6"><div className="skeleton h-20 rounded-xl" /></div>)}
-            </div>
-            <div className="card p-8"><div className="skeleton h-40 rounded-xl" /></div>
-          </div>
-        </div>
-      </>
-    );
-  }
+  if (loading) return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
+      <div style={{ textAlign: "center", color: "#64748b" }}>
+        <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>⏳</div>
+        <p style={{ fontSize: "0.875rem" }}>Chargement...</p>
+      </div>
+    </div>
+  );
 
   return (
-    <>
-      {/* <Navbar /> */}
-      <div className="page-light">
-        <div className="section">
-          <div className="container-app">
-            {/* Header */}
-            <div className="mb-8 animate-fade-in">
-              <h1 className="page-title flex items-center gap-3">
-                <span className="text-4xl">📊</span>
-                Dashboard Scraping
-              </h1>
-              <p className="page-subtitle">Gérez vos URLs et visualisez les statistiques</p>
+    <div style={{ padding: "2rem", maxWidth: "1100px", margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ marginBottom: "2rem" }}>
+        <h1 style={{
+          fontSize: "1.75rem", fontWeight: 800, letterSpacing: "-0.03em",
+          background: "linear-gradient(90deg, #e2e8f0, #a78bfa)",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+        }}>📊 Dashboard Scraping</h1>
+        <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>
+          Gérez vos URLs et visualisez les statistiques
+        </p>
+      </div>
+
+      {error && (
+        <div style={{
+          background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)",
+          color: "#fca5a5", padding: "0.75rem 1rem", borderRadius: "0.75rem",
+          fontSize: "0.85rem", marginBottom: "1.5rem", display: "flex", justifyContent: "space-between",
+        }}>
+          <span>⚠️ {error}</span>
+          <button onClick={() => setError(null)} style={{ background: "none", border: "none", color: "#f87171", cursor: "pointer" }}>✕</button>
+        </div>
+      )}
+
+      {/* Stat Cards */}
+      {stats && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "2rem" }}>
+          {statCards.map(({ label, value, icon, color, glow }) => (
+            <div key={label} style={{
+              background: "rgba(15,23,42,0.75)", border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "1rem", padding: "1.5rem",
+              backdropFilter: "blur(10px)", boxShadow: "0 20px 40px rgba(2,9,27,0.3)",
+            }}>
+              <div style={{
+                width: "2.75rem", height: "2.75rem", borderRadius: "0.75rem",
+                background: `${color}22`, border: `1px solid ${color}44`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "1.25rem", marginBottom: "1rem",
+                boxShadow: `0 6px 20px ${glow}`,
+              }}>{icon}</div>
+              <p style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#475569", marginBottom: "0.35rem" }}>{label}</p>
+              <p style={{ fontSize: "2.25rem", fontWeight: 800, color, letterSpacing: "-0.04em" }}>{value}</p>
             </div>
+          ))}
+        </div>
+      )}
 
-            {/* Error */}
-            {error && (
-              <div className="alert-error mb-6 animate-fade-in">
-                <span>⚠️</span>
-                <div>
-                  <p className="font-bold">Erreur</p>
-                  <p className="text-sm mt-0.5">{error}</p>
-                </div>
-                <button onClick={() => setError(null)} className="ml-auto text-red-400 hover:text-red-600">✕</button>
-              </div>
-            )}
-
-            {/* Stat Cards */}
-            {stats && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 stagger-children">
-                {statCards.map(({ label, value, icon, gradient, bg, text, border }) => (
-                  <div key={label} className={`card stat-card border ${border} animate-fade-in`}>
-                    <div className={`stat-icon bg-gradient-to-br ${gradient} shadow-md`}>
-                      <span>{icon}</span>
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{label}</p>
-                      <p className={`text-4xl font-extrabold ${text} mt-1`}>{value}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Add URL Form */}
-            <div className="form-card mb-6">
-              <h2 className="form-section-title">
-                <span>➕</span> Ajouter un site à scraper
-              </h2>
-              <p className="text-slate-500 text-sm mb-5">Entrez l'URL du site et un label optionnel</p>
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🌐</span>
-                  <input
-                    type="url"
-                    placeholder="https://exemple.com"
-                    value={newUrl}
-                    onChange={(e) => setNewUrl(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-                    className="input-field pl-9"
-                  />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Label (optionnel)"
-                  value={newLabel}
-                  onChange={(e) => setNewLabel(e.target.value)}
-                  className="input-field sm:w-44"
-                />
-                <button
-                  onClick={handleAdd}
-                  disabled={adding || !newUrl}
-                  className="btn-primary shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {adding ? (
-                    <>
-                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      Ajout...
-                    </>
-                  ) : '➕ Ajouter'}
-                </button>
-              </div>
-            </div>
-
-            {/* URLs Table */}
-            <div className="card overflow-hidden animate-fade-in">
-              <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="form-section-title">
-                  <span>📋</span> URLs scannées
-                  <span className="badge-neutral ml-2 text-sm">{urls.length}</span>
-                </h2>
-                <button onClick={fetchData} className="btn-ghost btn-sm" title="Rafraîchir">
-                  🔄
-                </button>
-              </div>
-
-              {urls.length === 0 ? (
-                <div className="py-20 text-center">
-                  <div className="text-5xl mb-3">🚫</div>
-                  <p className="text-lg font-semibold text-slate-600">Aucune URL enregistrée</p>
-                  <p className="text-slate-400 text-sm mt-1">Commencez par ajouter une URL ci-dessus</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-slate-100">
-                        <th className="table-header">URL</th>
-                        <th className="table-header hidden sm:table-cell">Label</th>
-                        <th className="table-header w-24">Données</th>
-                        <th className="table-header w-32">Statut</th>
-                        <th className="table-header w-44">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {urls.map((u) => (
-                        <tr key={u.id} className="table-row">
-                          <td className="table-cell">
-                            <a
-                              href={u.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary-600 hover:text-primary-800 hover:underline font-medium truncate block max-w-xs"
-                              title={u.url}
-                            >
-                              {u.url}
-                            </a>
-                          </td>
-                          <td className="table-cell hidden sm:table-cell">
-                            {u.label ? (
-                              <span className="badge-info">{u.label}</span>
-                            ) : (
-                              <span className="text-slate-300 font-medium">—</span>
-                            )}
-                          </td>
-                          <td className="table-cell">
-                            <span className="font-bold text-slate-800">{u.nb_donnees}</span>
-                          </td>
-                          <td className="table-cell">
-                            {u.actif ? (
-                              <span className="badge-success">● Actif</span>
-                            ) : (
-                              <span className="badge-neutral">⏸ Inactif</span>
-                            )}
-                          </td>
-                          <td className="table-cell">
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleToggle(u.id, u.actif)}
-                                className={`btn btn-sm text-xs ${u.actif ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'}`}
-                              >
-                                {u.actif ? '⏸ Désact.' : '▶ Activer'}
-                              </button>
-                              <button
-                                onClick={() => handleDelete(u.id)}
-                                className="btn btn-sm bg-red-100 text-red-600 hover:bg-red-200 text-xs"
-                              >
-                                🗑️
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
+      {/* Add URL */}
+      <div style={{
+        background: "rgba(15,23,42,0.75)", border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "1rem", padding: "1.5rem", marginBottom: "1.5rem",
+        backdropFilter: "blur(10px)",
+      }}>
+        <h2 style={{ fontWeight: 700, color: "#f1f5f9", marginBottom: "0.25rem", fontSize: "0.95rem" }}>➕ Ajouter un site à scraper</h2>
+        <p style={{ color: "#475569", fontSize: "0.8rem", marginBottom: "1rem" }}>Entrez l'URL du site et un label optionnel</p>
+        <div style={{ display: "flex", gap: "0.75rem" }}>
+          <input type="url" placeholder="https://www.kiprix.com/fr-mq" value={newUrl}
+            onChange={(e) => setNewUrl(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+            style={{
+              flex: 1, padding: "0.6rem 1rem", borderRadius: "0.75rem",
+              background: "rgba(15,23,42,0.95)", border: "1px solid rgba(148,163,184,0.2)",
+              color: "#e2e8f0", fontSize: "0.875rem", outline: "none",
+            }}
+          />
+          <input type="text" placeholder="Label (optionnel)" value={newLabel}
+            onChange={(e) => setNewLabel(e.target.value)}
+            style={{
+              width: "160px", padding: "0.6rem 1rem", borderRadius: "0.75rem",
+              background: "rgba(15,23,42,0.95)", border: "1px solid rgba(148,163,184,0.2)",
+              color: "#e2e8f0", fontSize: "0.875rem", outline: "none",
+            }}
+          />
+          <button onClick={handleAdd} disabled={adding || !newUrl} style={{
+            padding: "0.6rem 1.25rem", borderRadius: "0.75rem",
+            background: adding || !newUrl ? "rgba(99,102,241,0.3)" : "linear-gradient(90deg, #6366f1, #8b5cf6)",
+            color: "white", border: "none", fontWeight: 600, fontSize: "0.875rem",
+            cursor: adding || !newUrl ? "not-allowed" : "pointer",
+            boxShadow: "0 4px 12px rgba(99,102,241,0.3)", whiteSpace: "nowrap",
+          }}>
+            {adding ? "⏳..." : "➕ Ajouter"}
+          </button>
         </div>
       </div>
-    </>
+
+      {/* URLs Table */}
+      <div style={{
+        background: "rgba(15,23,42,0.75)", border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "1rem", overflow: "hidden", backdropFilter: "blur(10px)",
+      }}>
+        <div style={{
+          padding: "1rem 1.25rem", borderBottom: "1px solid rgba(255,255,255,0.07)",
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+        }}>
+          <h2 style={{ fontWeight: 700, color: "#f1f5f9", fontSize: "0.95rem" }}>
+            📋 URLs scannées
+            <span style={{
+              marginLeft: "0.5rem", background: "rgba(148,163,184,0.15)",
+              color: "#94a3b8", padding: "0.15rem 0.6rem", borderRadius: "999px", fontSize: "0.75rem",
+            }}>{urls.length}</span>
+          </h2>
+          <button onClick={fetchData} style={{
+            background: "transparent", border: "1px solid rgba(148,163,184,0.2)",
+            color: "#94a3b8", borderRadius: "0.6rem", padding: "0.3rem 0.7rem",
+            fontSize: "0.75rem", cursor: "pointer",
+          }}>🔄 Rafraîchir</button>
+        </div>
+
+        {urls.length === 0 ? (
+          <div style={{ padding: "4rem", textAlign: "center", color: "#334155" }}>
+            <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>🚫</div>
+            <p style={{ fontWeight: 600, color: "#475569" }}>Aucune URL enregistrée</p>
+            <p style={{ fontSize: "0.8rem", color: "#334155", marginTop: "0.35rem" }}>Ajoutez une URL ci-dessus</p>
+          </div>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+                {["URL", "Label", "Données", "Statut", "Actions"].map((h) => (
+                  <th key={h} style={{
+                    padding: "0.75rem 1rem", textAlign: "left",
+                    fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.07em",
+                    textTransform: "uppercase", color: "#475569",
+                  }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {urls.map((u) => (
+                <tr key={u.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(99,102,241,0.05)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <td style={{ padding: "0.75rem 1rem", maxWidth: "260px" }}>
+                    <a href={u.url} target="_blank" rel="noopener noreferrer"
+                      style={{ color: "#a5b4fc", textDecoration: "none", fontSize: "0.82rem",
+                               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>
+                      {u.url}
+                    </a>
+                  </td>
+                  <td style={{ padding: "0.75rem 1rem" }}>
+                    {u.label ? (
+                      <span style={{ background: "rgba(59,130,246,0.15)", color: "#93c5fd", padding: "0.2rem 0.65rem", borderRadius: "999px", fontSize: "0.75rem" }}>{u.label}</span>
+                    ) : <span style={{ color: "#334155" }}>—</span>}
+                  </td>
+                  <td style={{ padding: "0.75rem 1rem", fontWeight: 700, color: "#e2e8f0" }}>{u.nb_donnees}</td>
+                  <td style={{ padding: "0.75rem 1rem" }}>
+                    <span style={{
+                      background: u.actif ? "rgba(16,185,129,0.15)" : "rgba(100,116,139,0.2)",
+                      color: u.actif ? "#6ee7b7" : "#94a3b8",
+                      padding: "0.2rem 0.65rem", borderRadius: "999px", fontSize: "0.75rem", fontWeight: 600,
+                    }}>
+                      {u.actif ? "● Actif" : "⏸ Inactif"}
+                    </span>
+                  </td>
+                  <td style={{ padding: "0.75rem 1rem" }}>
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      <button onClick={() => toggleScrapeUrl(u.id, !u.actif).then(fetchData)}
+                        style={{
+                          padding: "0.25rem 0.65rem", borderRadius: "0.5rem", fontSize: "0.72rem", fontWeight: 600,
+                          background: u.actif ? "rgba(100,116,139,0.2)" : "rgba(16,185,129,0.15)",
+                          color: u.actif ? "#94a3b8" : "#6ee7b7", border: "none", cursor: "pointer",
+                        }}>
+                        {u.actif ? "Désact." : "Activer"}
+                      </button>
+                      <button onClick={() => deleteScrapeUrl(u.id).then(fetchData)}
+                        style={{
+                          padding: "0.25rem 0.65rem", borderRadius: "0.5rem", fontSize: "0.72rem",
+                          background: "rgba(239,68,68,0.15)", color: "#f87171", border: "none", cursor: "pointer",
+                        }}>🗑️</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
   );
 }

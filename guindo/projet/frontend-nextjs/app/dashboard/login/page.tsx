@@ -15,11 +15,10 @@ export default function DashboardLoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
     try {
       await fastapiLogin(email, password);
       router.push("/dashboard");
-    } catch (e: any) {
+    } catch {
       setError("Email ou mot de passe incorrect");
     } finally {
       setLoading(false);
@@ -27,52 +26,88 @@ export default function DashboardLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded-lg shadow w-full max-w-sm">
-        <h1 className="text-xl font-bold mb-1">Dashboard Admin</h1>
-        <p className="text-sm text-gray-400 mb-6">Connexion KaribMarket API</p>
+    <div style={{
+      minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+      background: "radial-gradient(circle at 20% 30%, rgba(124,58,237,0.3), transparent 40%), radial-gradient(circle at 80% 70%, rgba(14,165,233,0.2), transparent 35%), linear-gradient(135deg, #0b1220, #091020)",
+    }}>
+      {/* Decorative glow */}
+      <div style={{
+        position: "absolute", width: "400px", height: "400px", borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(124,58,237,0.15), transparent 70%)",
+        pointerEvents: "none",
+      }} />
+
+      <div style={{
+        width: "100%", maxWidth: "400px", padding: "2.5rem",
+        background: "rgba(15,23,42,0.85)", backdropFilter: "blur(20px)",
+        border: "1px solid rgba(255,255,255,0.1)", borderRadius: "1.25rem",
+        boxShadow: "0 30px 60px rgba(2,9,27,0.6)",
+        position: "relative",
+      }}>
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <div style={{
+            width: "56px", height: "56px", margin: "0 auto 1rem",
+            background: "linear-gradient(135deg, #7c3aed, #3b82f6)",
+            borderRadius: "1rem", display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: "1.5rem", boxShadow: "0 8px 24px rgba(124,58,237,0.4)",
+          }}>🌺</div>
+          <h1 style={{
+            fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.03em",
+            background: "linear-gradient(90deg, #e2e8f0, #a78bfa)",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          }}>KaribMarket Admin</h1>
+          <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.35rem" }}>
+            Connexion au dashboard
+          </p>
+        </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 text-sm p-3 rounded mb-4">
-            {error}
-          </div>
+          <div style={{
+            background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)",
+            color: "#fca5a5", padding: "0.75rem 1rem", borderRadius: "0.75rem",
+            fontSize: "0.85rem", marginBottom: "1.25rem",
+          }}>⚠️ {error}</div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.4rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
               Email
             </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="admin@example.com"
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+              placeholder="admin@karib.com"
+              style={{
+                width: "100%", padding: "0.65rem 1rem", borderRadius: "0.75rem",
+                background: "rgba(15,23,42,0.95)", border: "1px solid rgba(148,163,184,0.2)",
+                color: "#e2e8f0", fontSize: "0.9rem", outline: "none",
+                boxSizing: "border-box",
+              }}
             />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.4rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
               Mot de passe
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
               placeholder="••••••••"
+              style={{
+                width: "100%", padding: "0.65rem 1rem", borderRadius: "0.75rem",
+                background: "rgba(15,23,42,0.95)", border: "1px solid rgba(148,163,184,0.2)",
+                color: "#e2e8f0", fontSize: "0.9rem", outline: "none",
+                boxSizing: "border-box",
+              }}
             />
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? "Connexion..." : "Se connecter"}
+          <button type="submit" disabled={loading} style={{
+            marginTop: "0.5rem", padding: "0.75rem",
+            background: loading ? "rgba(99,102,241,0.5)" : "linear-gradient(90deg, #6366f1, #8b5cf6)",
+            color: "white", border: "none", borderRadius: "0.75rem",
+            fontSize: "0.9rem", fontWeight: 700, cursor: loading ? "not-allowed" : "pointer",
+            boxShadow: "0 6px 20px rgba(99,102,241,0.35)",
+            transition: "all 0.2s ease",
+          }}>
+            {loading ? "Connexion..." : "Se connecter →"}
           </button>
         </form>
       </div>
