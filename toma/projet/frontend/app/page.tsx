@@ -160,8 +160,11 @@ export default function Home() {
               <td>{product.prix}€</td>
               <td>{product.commune}</td>
               <td>{product.categorie}</td>
-              <td>
-                {localStorage.getItem('currentUserId') !== null && product.proprietaire_id === Number(localStorage.getItem('currentUserId')) ? 
+              <td> 
+                
+                {NOTES :  Utiliser get_current_user de l'API auth_route pour savoir le id du user  
+                
+                localStorage.getItem('currentUserId') !== null && product.proprietaire_id === Number(localStorage.getItem('currentUserId')) ? 
                   <Button variant="danger" size="sm" onClick={() => handleDelete(product.id)}>
                     Supprimer
                   </Button> 
