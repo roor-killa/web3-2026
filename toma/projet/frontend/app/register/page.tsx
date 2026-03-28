@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [telephone,setTelephone] = useState('')
   const [email,setEmail] = useState('')
   const [mdp,setMdp] = useState('')
+	const API_BASE_URL = "http://localhost:8000";
 
   const router = useRouter()
 
@@ -20,7 +21,7 @@ export default function RegisterPage() {
 	console.log('Essayer de log in')
 	console.log(nom,telephone,email,mdp)
 
-	fetch('http://127.0.0.1:8000/auth/register', {
+	fetch(`${API_BASE_URL}/auth/register`, {
 	  method: "POST",
 	  headers: {
 		"Content-Type": "application/json",

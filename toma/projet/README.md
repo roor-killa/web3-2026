@@ -1,5 +1,5 @@
 
-Etapes pour lancer le projet
+Etapes pour lancer le projet PRODUIT
 
 1. Prerequis
 - Installer Docker Desktop (ou Docker Engine + Docker Compose).
@@ -32,3 +32,10 @@ docker compose -f infra/docker-compose.yml ps
 ```bash
 docker compose -f infra/docker-compose.yml down
 ```
+
+
+
+
+Etapes pour lancer le projet SCRAPING 
+
+UNIQUEMENT LANCER LE FRONTEND DONC LE NEXTJS ET NGINX 

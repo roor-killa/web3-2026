@@ -5,7 +5,7 @@ services:
     image: postgres:16
     container_name: postgres
     ports:
-      - "5432:5432"
+      - "5434:5432"
     environment:
       POSTGRES_DB: laravel
       POSTGRES_USER: laravel
@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile
     container_name: laravel
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - ../backend:/var/www
       - /var/www/vendor
