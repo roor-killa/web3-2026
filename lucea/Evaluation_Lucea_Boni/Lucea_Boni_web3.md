@@ -6,9 +6,11 @@
 - **Numéro étudiant :** 22404673
 - **Date :** 01/04/2026
 
+
 ---
 
 ## Partie 1
+
 
 ### Question 1 - Role des technologies :
 
@@ -20,6 +22,7 @@
 
 4. Docker : Docker permet de faire fonctionner toute l'application (Next.js, Laravel et PostgreSQL) dans des conteneurs isolés et reproductibles. 
 
+
 ### Question 2 - Architecture de l’application :
 
 Next.js gère l'interface utilisateur et communique avec l'API.
@@ -27,9 +30,11 @@ Laravel gère la logique métier et traite les requêtes.
 PostgreSQL stocke et organise les données.
 Docker permet de faire fonctionner toutes ces technologies ensemble dans un environnement identique sur n’importe quelle machine.
 
+
 ---
 
 ## Partie 3
+
 
 ### Question 5 - Intérêt de Docker :
 
@@ -41,50 +46,50 @@ Avantage de l'utilisation de Docker dans ce projet :
 
 - Grâce à Docker, il n'est pas nécessaire d’installer manuellement toutes les technologies (Next.js, Laravel, PostgreSQL) sur l'ordinateur. Tout est déjà configuré dans les conteneurs et peut être lancé rapidement.
 
+
 ### Question 6 - Services Docker du projet :
 
 Dans cet environnement avec Docker, on peut mettre en place les services (conteneurs) suivants :
 
-1. Frontend - Next.js :
-- Conteneur qui gère l'interface utilisateur et affiche les données de l'application dans le navigateur.
+1. Frontend - Next.js : Conteneur qui gère l'interface utilisateur et affiche les données de l'application dans le navigateur.
 
-2. Backend - Laravel :
-- Conteneur qui fournit l'API, traite les requêtes du front-end et applique la logique métier de l'application.
+2. Backend - Laravel : Conteneur qui fournit l'API, traite les requêtes du front-end et applique la logique métier de l'application.
 
-3. Base de données - PostgreSQL :
-- Conteneur qui stocke et organise les données de l'application (utilisateurs, produits, etc.).
+3. Base de données - PostgreSQL : Conteneur qui stocke et organise les données de l'application (utilisateurs, produits, etc.).
 
-4. Serveur web - Nginx :
-- Conteneur qui sert d'intermédiaire pour gérer les requêtes HTTP et rediriger les demandes vers le backend ou le frontend.
+4. Serveur web - Nginx : Conteneur qui sert d'intermédiaire pour gérer les requêtes HTTP et rediriger les demandes vers le backend ou le frontend.
+
 
 ---
 
 ## Partie 4
 
+
 ### Question 7 - Affichage des certificats Next.js <-> Laravel :
 
 1. Côté Laravel :
-- Créer un modèle et une migration pour les certificats afin de définir la structure de la table dans la base de données.
+    - Créer un modèle et une migration pour les certificats afin de définir la structure de la table dans la base de données.
 
-- Créer un contrôleur qui récupère la liste des certificats depuis la base de données.
+    - Créer un contrôleur qui récupère la liste des certificats depuis la base de données.
 
-- Créer une route API qui permet d'accéder à ces données.
+    - Créer une route API qui permet d'accéder à ces données.
 
-- Le contrôleur renvoie les certificats au format JSON pour qu'ils puissent être utilisés par le front-end.
+    - Le contrôleur renvoie les certificats au format JSON pour qu'ils puissent être utilisés par le front-end.
 
 2. Côté Next.js
-- Créer une page ou un composant qui va afficher les certificats.
+    - Créer une page ou un composant qui va afficher les certificats.
 
-- Faire une requête HTTP vers l'API Laravel pour récupérer la liste des certificats.
+    - Faire une requête HTTP vers l'API Laravel pour récupérer la liste des certificats.
 
-- Stocker les données récupérées dans un state (ou une variable d'état) du composant.
+    - Stocker les données récupérées dans un state (ou une variable d'état) du composant.
 
 3. Côté affichage
-- Parcourir la liste des certificats récupérés.
+    - Parcourir la liste des certificats récupérés.
 
-- Afficher les informations de chaque certificat (par exemple : titre, description, date).
+    - Afficher les informations de chaque certificat (par exemple : titre, description, date).
 
-- Présenter les certificats dans l'interface utilisateur sous forme de liste ou de cartes.
+    - Présenter les certificats dans l'interface utilisateur sous forme de liste ou de cartes.
+
 
 ### Question 8 - PostgreSQL vs Blockchain - analyse critique :
 
