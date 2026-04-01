@@ -1,6 +1,19 @@
 
 
-AVANT :
-Tester connexion backend frontend avec email password
+Docker:
+PHP
+NGINX
+Laravel
+PostgreSQL
 
-09/20 Ex: Produits
+docker-compose.yml
+Laravel
+PHP
+PostgreSQL
+
+
+
+-------------------------------------------------------------------------
+
+
+Faire une page de connexion: Email + Mot de Passe pour tester la connecxion frontend -> laravel
