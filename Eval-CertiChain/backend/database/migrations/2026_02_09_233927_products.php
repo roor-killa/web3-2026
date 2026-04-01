@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('products', function (Blueprint $table) {
-        //     $table->id(); // Automatically creates 'id'
-        //     $table->string('titre'); // For the title
-        //     $table->text('description')->nullable(); // Text area, allows empty
-        //     $table->decimal('prix', 8, 2); // Decimal for prices (e.g., 99.99)
-            
-        //     // Option A: Laravel Standard (Recommended)
-        //     $table->timestamps(); // Creates created_at and updated_at
-        // });
+        Schema::create('certificats', function (Blueprint $table) {
+            $table->id();
+            $table->string('identifiant')->unique();
+            $table->string('nom_etudiant');
+            $table->string('intitule');
+            $table->date('date_emission');
+            $table->string('hash_blockchain');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('certificats');
     }
 };
