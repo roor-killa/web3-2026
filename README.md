@@ -50,7 +50,8 @@ Services accessibles:
 
 - Frontend Next.js: `http://localhost:3000`
 - API Laravel via Nginx: `http://localhost:8000/api`
-- PostgreSQL: `localhost:5432`
+- FastAPI (Docs): `http://localhost:8002/docs`
+- PostgreSQL: `localhost:15432`
 
 Commandes utiles (dans un autre terminal):
 

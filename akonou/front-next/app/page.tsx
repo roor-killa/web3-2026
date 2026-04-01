@@ -45,6 +45,18 @@ export default function Home() {
           >
             Voir les produits
           </Link>
+          <Link
+            href="/database"
+            className="inline-block px-6 py-3 border border-zinc-700 text-zinc-200 font-semibold rounded-lg bg-zinc-900 hover:bg-zinc-800 transition-colors"
+          >
+            Interfaces BD
+          </Link>
+          <Link
+            href="/admin/scraper"
+            className="inline-block px-6 py-3 border border-purple-700 text-purple-200 font-semibold rounded-lg bg-purple-900 hover:bg-purple-800 transition-colors"
+          >
+            🎛️ Admin Scraper
+          </Link>
         </div>
       </main>
     </div>

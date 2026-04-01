@@ -33,7 +33,7 @@ services:
     container_name: kiprix_fastapi
     command: python -m uvicorn fastapi_app:app --host 0.0.0.0 --port 8000 --reload
     ports:
-      - "8000:8000"
+      - "8002:8000"
     environment:
       DATABASE_URL: postgresql://${DB_USERNAME:-kiprix}:${DB_PASSWORD:-password}@postgres:5432/${DB_DATABASE:-kiprix_db}
       PYTHONUNBUFFERED: 1

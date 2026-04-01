@@ -1,7 +1,9 @@
 version: "3.9"
 
 services:
-  # PostgreSQL
+  # =====================================================
+  # PostgreSQL (partagé Laravel + FastAPI)
+  # =====================================================
   db:
     image: postgres:16-alpine
     container_name: postgres_db
@@ -21,7 +23,31 @@ services:
       timeout: 5s
       retries: 5
 
-  # Backend Laravel
+  # =====================================================
+  # FastAPI - Scraper Python
+  # =====================================================
+  fastapi:
+    build:
+      context: ../projet
+      dockerfile: Dockerfile
+    container_name: kiprix_fastapi
+    command: python -m uvicorn fastapi_app:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8002:8000"
+    environment:
+      DATABASE_URL: postgresql://laravel_user:laravel_password@db:5432/laravel_db
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ../projet:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app_network
+
+  # =====================================================
+  # Backend Laravel (PHP-FPM)
+  # =====================================================
   backend:
     build:
       context: ../back-laravel
@@ -39,13 +65,18 @@ services:
       DB_DATABASE: laravel_db
       DB_USERNAME: laravel_user
       DB_PASSWORD: laravel_password
+      FASTAPI_URL: http://kiprix_fastapi:8000
     depends_on:
       db:
         condition: service_healthy
+      fastapi:
+        condition: service_started
     networks:
       - app_network
 
-  # Frontend NextJS
+  # =====================================================
+  # Frontend Next.js
+  # =====================================================
   frontend:
     build:
       context: ../front-next
@@ -61,14 +92,16 @@ services:
     networks:
       - app_network
 
+  # =====================================================
   # Nginx Reverse Proxy
+  # =====================================================
   nginx:
     image: nginx:alpine
     container_name: nginx_proxy
     ports:
       - "8000:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./server.conf:/etc/nginx/conf.d/default.conf
       - ../back-laravel:/var/www/html
     depends_on:
       - backend

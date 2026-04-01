@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Http;
 
 class ScrapingController extends Controller
 {
+    private function fastapiUrl(): string
+    {
+        return rtrim(env('FASTAPI_URL', 'http://kiprix_fastapi:8000'), '/');
+    }
+
     /**
      * Récupère l'état d'une tâche de scraping
      */
@@ -41,7 +46,7 @@ class ScrapingController extends Controller
 
         // Appeler l'API FastAPI
         try {
-            $response = Http::post('http://kiprix_fastapi:8000/scrape', [
+            $response = Http::post($this->fastapiUrl() . '/scrape', [
                 'territory' => $url->territory,
                 'max_pages' => $url->max_pages,
                 'min_delay' => 1.5,
@@ -77,7 +82,7 @@ class ScrapingController extends Controller
         $lines = $request->query('lines', 100);
 
         try {
-            $response = Http::get("http://kiprix_fastapi:8000/logs?lines=$lines");
+            $response = Http::get($this->fastapiUrl() . "/logs?lines=$lines");
 
             if ($response->successful()) {
                 return response()->json($response->json());

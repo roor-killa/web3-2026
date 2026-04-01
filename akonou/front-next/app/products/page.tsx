@@ -241,6 +241,12 @@ export default function ProductsPage() {
               Deconnexion
             </button>
             <Link
+              href="/database"
+              className="px-4 py-2 rounded-md border border-zinc-700 text-zinc-200"
+            >
+              Interfaces BD
+            </Link>
+            <Link
               href="/products/new"
               className="px-4 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700"
             >

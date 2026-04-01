@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { getAccessToken, clearAccessToken } from "@/lib/auth";
 
 interface ScraperURL {
   id: number;
@@ -14,25 +15,45 @@ interface ScraperURL {
   status: string;
 }
 
+interface ScraperStats {
+  active_urls: number;
+  successful_scrapings: number;
+  failed_scrapings: number;
+  total_products: number;
+}
+
 export default function ScraperDashboard() {
+  const router = useRouter();
   const [urls, setUrls] = useState<ScraperURL[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<ScraperStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("urls");
 
-  useEffect(() => {
-    fetchData();
-    // Rafraîchir toutes les 30 secondes
-    const interval = setInterval(fetchData, 30000);
-    return () => clearInterval(interval);
+  const apiBase = useMemo(() => {
+    return (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace(/\/$/, "");
   }, []);
 
-  async function fetchData() {
+  const authHeaders = useCallback((): Record<string, string> => {
+    const token = getAccessToken();
+    return {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  }, []);
+
+  const fetchData = useCallback(async () => {
     try {
       const [urlsRes, statsRes] = await Promise.all([
-        fetch("/api/scraper/urls"),
-        fetch("/api/scraper/stats"),
+        fetch(`${apiBase}/scraper/urls`, { headers: authHeaders() }),
+        fetch(`${apiBase}/scraper/stats`, { headers: authHeaders() }),
       ]);
+
+      if (urlsRes.status === 401) {
+        clearAccessToken();
+        router.replace("/login");
+        return;
+      }
 
       if (urlsRes.ok) {
         const data = await urlsRes.json();
@@ -48,12 +69,24 @@ export default function ScraperDashboard() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [apiBase, authHeaders, router]);
+
+  useEffect(() => {
+    const token = getAccessToken();
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, [fetchData, router]);
 
   async function toggleURL(id: number) {
     try {
-      const res = await fetch(`/api/scraper/urls/${id}/toggle`, {
+      const res = await fetch(`${apiBase}/scraper/urls/${id}/toggle`, {
         method: "POST",
+        headers: authHeaders(),
       });
 
       if (res.ok) {
@@ -66,9 +99,9 @@ export default function ScraperDashboard() {
 
   async function launchScraping(id: number) {
     try {
-      const res = await fetch("/api/scraper/launch", {
+      const res = await fetch(`${apiBase}/scraper/launch`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders(),
         body: JSON.stringify({ scraper_url_id: id }),
       });
 
@@ -246,16 +279,16 @@ export default function ScraperDashboard() {
           </div>
         )}
 
-        {activeTab === "add" && <AddURLForm onAdded={fetchData} />}
+        {activeTab === "add" && <AddURLForm onAdded={fetchData} apiBase={apiBase} />}
 
-        {activeTab === "logs" && <ScrapingLogs />}
+        {activeTab === "logs" && <ScrapingLogs apiBase={apiBase} />}
       </div>
     </div>
   );
 }
 
 // Composant pour ajouter une URL
-function AddURLForm({ onAdded }: { onAdded: () => void }) {
+function AddURLForm({ onAdded, apiBase }: { onAdded: () => void; apiBase: string }) {
   const [formData, setFormData] = useState({
     url: "",
     territory: "gp",
@@ -264,13 +297,22 @@ function AddURLForm({ onAdded }: { onAdded: () => void }) {
     cron_expression: "0 2 * * *",
   });
 
+  function authHeaders(): Record<string, string> {
+    const token = getAccessToken();
+    return {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/scraper/urls", {
+      const res = await fetch(`${apiBase}/scraper/urls`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders(),
         body: JSON.stringify(formData),
       });
 
@@ -397,18 +439,20 @@ function AddURLForm({ onAdded }: { onAdded: () => void }) {
 }
 
 // Composant pour les logs
-function ScrapingLogs() {
+function ScrapingLogs({ apiBase }: { apiBase: string }) {
   const [logs, setLogs] = useState<string[]>([]);
 
-  useEffect(() => {
-    fetchLogs();
-    const interval = setInterval(fetchLogs, 5000);
-    return () => clearInterval(interval);
+  const authHeaders = useCallback((): Record<string, string> => {
+    const token = getAccessToken();
+    return {
+      Accept: "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
   }, []);
 
-  async function fetchLogs() {
+  const fetchLogs = useCallback(async () => {
     try {
-      const res = await fetch("/api/scraper/logs?lines=50");
+      const res = await fetch(`${apiBase}/scraper/logs?lines=50`, { headers: authHeaders() });
       if (res.ok) {
         const data = await res.json();
         setLogs(data.logs || []);
@@ -416,7 +460,20 @@ function ScrapingLogs() {
     } catch (error) {
       console.error("Erreur logs:", error);
     }
-  }
+  }, [apiBase, authHeaders]);
+
+  useEffect(() => {
+    const initialTimer = setTimeout(() => {
+      void fetchLogs();
+    }, 0);
+    const interval = setInterval(() => {
+      void fetchLogs();
+    }, 5000);
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
+  }, [fetchLogs]);
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
