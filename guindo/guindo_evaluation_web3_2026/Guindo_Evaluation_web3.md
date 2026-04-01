@@ -1,10 +1,10 @@
-# CertiChain – Évaluation Web3
+# CertiChain – Évaluation Web3 2026
 
 ## Informations étudiant
 
 - **Nom :** Guindo
-- **Prénom :** *[Prénom]*
-- **Numéro étudiant :** *[Numéro]*
+- **Prénom :** Ibrahim Ousseini **
+- **Numéro étudiant :** 22507721 **
 - **Date :** 01 avril 2026
 
 ---
