@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # Frontend - Next.js
+  frontend:
+    build:
+      context: ./frontend/certichain
+      dockerfile: Dockerfile
+    container_name: certichain-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
+    networks:
+      - certichain-network
+
+  # Backend - Laravel API
+  backend:
+    build:
+      context: ./backend/certichain-api
+      dockerfile: Dockerfile
+    container_name: certichain-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=CertiChain
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=base64:cKHUM1/nJr/Q6TTwJDvR64R9wPdIxBINMpM25QtpNGk=
+      - APP_URL=http://localhost:8000
+      - DB_CONNECTION=pgsql
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_DATABASE=certichain
+      - DB_USERNAME=certichain_user
+      - DB_PASSWORD=certichain_secret
+      - SESSION_DRIVER=file
+      - CACHE_STORE=file
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - certichain-network
+
+  # Database - PostgreSQL
+  database:
+    image: postgres:16-alpine
+    container_name: certichain-database
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=certichain
+      - POSTGRES_USER=certichain_user
+      - POSTGRES_PASSWORD=certichain_secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U certichain_user -d certichain"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - certichain-network
+
+networks:
+  certichain-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

@@ -1,0 +1,93 @@
+✅ CertiChain Project Created Successfully!
+
+================================================================================
+PROJECT STRUCTURE
+================================================================================
+
+eval/
+├── docker-compose.yml          # Orchestrates all 3 services
+├── README.md                   # Documentation
+│
+├── frontend/
+│   └── certichain/             # Next.js 16 (TypeScript + Tailwind)
+│       └── Dockerfile
+│
+├── backend/
+│   └── certichain-api/         # Laravel 13 API
+│       ├── Dockerfile
+│       ├── app/Models/Certificate.php
+│       ├── app/Http/Controllers/Api/CertificateController.php
+│       └── routes/api.php
+│
+└── database/
+    └── init/
+        └── 01_create_certificates.sql   # PostgreSQL init script
+
+================================================================================
+DOCKER SERVICES
+================================================================================
+
+| Service   | Port | Technology    |
+|-----------|------|---------------|
+| frontend  | 3000 | Next.js       |
+| backend   | 8000 | Laravel       |
+| database  | 5432 | PostgreSQL 16 |
+
+================================================================================
+API ENDPOINTS
+================================================================================
+
+GET  /api/certificates          - List all certificates
+POST /api/certificates          - Create a new certificate
+GET  /api/certificates/{id}     - Get a specific certificate
+GET  /api/certificates/verify/{hash} - Verify certificate by blockchain hash
+
+================================================================================
+DATABASE SCHEMA (certificates table)
+================================================================================
+
+| Column              | Type         | Description                      |
+|---------------------|--------------|----------------------------------|
+| id                  | SERIAL       | Primary key                      |
+| student_name        | VARCHAR(255) | Name of the student              |
+| certification_title | VARCHAR(255) | Title of the certification       |
+| issue_date          | DATE         | Date of certificate issuance     |
+| blockchain_hash     | VARCHAR(66)  | Blockchain hash/proof identifier |
+| created_at          | TIMESTAMP    | Record creation timestamp        |
+| updated_at          | TIMESTAMP    | Record update timestamp          |
+
+================================================================================
+HOW TO RUN
+================================================================================
+
+1. Start all services:
+   docker-compose up -d --build
+
+2. Access the application:
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8000
+   - Database: localhost:5432
+
+3. Stop all services:
+   docker-compose down
+
+================================================================================
+ENVIRONMENT VARIABLES
+================================================================================
+
+Database credentials (already configured):
+- DB_DATABASE: certichain
+- DB_USERNAME: certichain_user
+- DB_PASSWORD: certichain_secret
+
+================================================================================
+WEB3 CONCEPT
+================================================================================
+
+This application demonstrates Web3 principles:
+- Decentralized Verification: Certificate hashes are stored on blockchain
+- Immutability: Once issued, certificates cannot be altered
+- Public Verifiability: Anyone can verify a certificate's authenticity
+
+The blockchain_hash field stores a hash/proof that can be verified on a
+blockchain, ensuring the certificate data has not been tampered with.
