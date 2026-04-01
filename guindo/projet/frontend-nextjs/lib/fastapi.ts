@@ -69,6 +69,24 @@ export const fastapiLogin = async (
   setFastapiToken(data.access_token);
 };
 
+export const fastapiRegister = async (
+  nom: string,
+  email: string,
+  telephone: string,
+  mot_de_passe: string
+): Promise<void> => {
+  const response = await fetch(`${FASTAPI_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nom, email, telephone, mot_de_passe }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || "Erreur lors de l'inscription");
+  }
+};
+
 // -------------------------
 // Dashboard stats
 // -------------------------

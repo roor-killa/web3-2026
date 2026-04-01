@@ -1,78 +1,118 @@
+'use client';
 import Link from 'next/link';
 
 export default function Home() {
-    const services = [
-        { label: '🌐 Backend Laravel', url: 'http://localhost:8080', port: 'localhost:8080', color: 'from-orange-500 to-red-500' },
-        { label: '🐍 Backend FastAPI', url: 'http://localhost:8001', port: 'localhost:8001', color: 'from-green-500 to-teal-500' },
-        { label: '🗄️ pgAdmin', url: 'http://localhost:8081', port: 'localhost:8081', color: 'from-blue-500 to-cyan-500' },
-    ];
+  const pages = [
+    // { href: '/login', icon: '🔐', label: 'Connexion', desc: 'Accéder à votre compte Laravel' },
+    // { href: '/register', icon: '📝', label: 'Inscription', desc: 'Créer un nouveau compte Laravel' },
+    { href: '/login', icon: '📦', label: 'Produits', desc: 'Voir le catalogue' },
+    { href: '/dashboard/login', icon: '📊', label: 'Dashboard', desc: 'Tableau de bord FastAPI' },
+  ];
 
-    const pages = [
-        { href: '/login', icon: '🔐', label: 'Connexion', desc: 'Accéder à votre compte' },
-        { href: '/register', icon: '📝', label: 'Inscription', desc: 'Créer un nouveau compte' },
-        { href: '/products', icon: '📦', label: 'Produits', desc: 'Voir le catalogue' },
-    ];
+  const services = [
+    { label: '🌐 Backend Laravel', url: 'http://localhost:8080', port: 'localhost:8080', color: '#f97316' },
+    { label: '🐍 Backend FastAPI', url: 'http://localhost:8000', port: 'localhost:8000', color: '#10b981' },
+    { label: '🗄️ pgAdmin', url: 'http://localhost:8081', port: 'localhost:8081', color: '#3b82f6' },
+  ];
 
-    return (
-        <main className="page-gradient flex items-center justify-center p-6 relative overflow-hidden">
-            {/* Background decorations */}
-            <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
-            <div className="absolute top-16 right-16 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-16 left-16 w-64 h-64 bg-accent-500/20 rounded-full blur-3xl pointer-events-none" />
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1.5rem',
+      fontFamily: 'system-ui, sans-serif',
+    }}>
+      <div style={{ width: '100%', maxWidth: '640px' }}>
 
-            <div className="w-full max-w-2xl relative animate-slide-up">
-                {/* Hero */}
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-3xl backdrop-blur-sm border border-white/30 mb-5 shadow-glass animate-float">
-                        <span className="text-4xl">🛒</span>
-                    </div>
-                    <h1 className="text-5xl font-extrabold text-white tracking-tight mb-2">
-                        Web<span style={{color: '#a5b4fc'}}>Store</span>
-                    </h1>
-                    <p className="text-white/70 text-lg">
-                        Plateforme de gestion des produits · Web3 2026
-                    </p>
-                </div>
+        {/* Hero */}
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{
+            width: '80px', height: '80px', margin: '0 auto 1.25rem',
+            background: 'rgba(255,255,255,0.2)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '1.5rem',
+            border: '1px solid rgba(255,255,255,0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '2.5rem',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+          }}>🛒</div>
+          <h1 style={{ fontSize: '3rem', fontWeight: 800, color: 'white', margin: '0 0 0.5rem', letterSpacing: '-0.03em' }}>
+            Web<span style={{ color: '#a5b4fc' }}>Store</span>
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem', margin: 0 }}>
+            Plateforme de gestion des produits · Web3 2026
+          </p>
+        </div>
 
-                {/* Navigation cards */}
-                <div className="card p-6 mb-4">
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Pages disponibles</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {pages.map(({ href, icon, label, desc }) => (
-                            <Link
-                                key={href}
-                                href={href}
-                                className="group p-4 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition-all duration-200 hover:-translate-y-0.5"
-                            >
-                                <div className="text-2xl mb-2">{icon}</div>
-                                <div className="font-semibold text-slate-800 text-sm group-hover:text-primary-700">{label}</div>
-                                <div className="text-xs text-slate-400 mt-0.5">{desc}</div>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+        {/* Nav cards */}
+        <div style={{
+          background: 'white', borderRadius: '1.25rem', padding: '1.5rem',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.15)', marginBottom: '1rem',
+        }}>
+          <p style={{ fontSize: '0.72rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem', marginTop: 0 }}>
+            Pages disponibles
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+            {pages.map(({ href, icon, label, desc }) => (
+              <Link key={href} href={href} style={{
+                display: 'block', padding: '1rem', borderRadius: '0.875rem',
+                border: '1px solid #f1f5f9', textDecoration: 'none',
+                background: 'white', transition: 'all 0.15s ease',
+              }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#c7d2fe';
+                  (e.currentTarget as HTMLElement).style.background = '#f5f3ff';
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = '#f1f5f9';
+                  (e.currentTarget as HTMLElement).style.background = 'white';
+                  (e.currentTarget as HTMLElement).style.transform = 'none';
+                }}
+              >
+                <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{icon}</div>
+                <div style={{ fontWeight: 700, fontSize: '0.875rem', color: '#1e293b', marginBottom: '0.2rem' }}>{label}</div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8', lineHeight: 1.4 }}>{desc}</div>
+              </Link>
+            ))}
+          </div>
+        </div>
 
-                {/* Services */}
-                <div className="card p-6">
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-4">Services disponibles</h2>
-                    <div className="space-y-3">
-                        {services.map(({ label, url, port, color }) => (
-                            <a
-                                key={url}
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors duration-150 group"
-                            >
-                                <div className="font-medium text-slate-700 text-sm">{label}</div>
-                                <span className={`text-xs font-mono font-semibold px-3 py-1 rounded-full text-white bg-gradient-to-r ${color} group-hover:shadow-md transition-shadow`}>
-                                    {port} →
-                                </span>
-                            </a>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </main>
-    );
+        {/* Services */}
+        <div style={{
+          background: 'white', borderRadius: '1.25rem', padding: '1.5rem',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+        }}>
+          <p style={{ fontSize: '0.72rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem', marginTop: 0 }}>
+            Services disponibles
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {services.map(({ label, url, port, color }) => (
+              <a key={url} href={url} target="_blank" rel="noopener noreferrer" style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '0.75rem 1rem', borderRadius: '0.75rem', textDecoration: 'none',
+                transition: 'background 0.15s ease',
+              }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#f8fafc'}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
+              >
+                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#475569' }}>{label}</span>
+                <span style={{
+                  fontSize: '0.75rem', fontWeight: 700, fontFamily: 'monospace',
+                  padding: '0.25rem 0.75rem', borderRadius: '999px',
+                  background: color, color: 'white',
+                  boxShadow: `0 2px 8px ${color}66`,
+                }}>
+                  {port} →
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

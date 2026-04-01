@@ -15,128 +15,61 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
+    setError(""); setIsLoading(true);
     try {
-      const data = await login({ email, password });
-      console.log("Login success:", data);
+      await login({ email, password });
       router.push("/products");
     } catch (err: any) {
-      console.error(err);
       setError(err.message || "Identifiants incorrects");
-    } finally {
-      setIsLoading(false);
-    }
+    } finally { setIsLoading(false); }
   };
 
   return (
-    <div className="page-gradient flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none" />
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary-400/20 rounded-full blur-3xl animate-pulse-slow pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent-500/20 rounded-full blur-3xl animate-pulse-slow pointer-events-none" style={{animationDelay: '1.5s'}} />
-
-      <div className="w-full max-w-md relative animate-slide-up">
-        {/* Card */}
-        <div className="card p-8 sm:p-10">
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '1rem', fontFamily: 'system-ui, sans-serif' }}>
+      <div style={{ width: '100%', maxWidth: '420px' }}>
+        <div style={{ background: 'white', borderRadius: '1.5rem', padding: '2.5rem', boxShadow: '0 25px 50px rgba(0,0,0,0.2)' }}>
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl shadow-glow mb-4 animate-float">
-              <span className="text-3xl">🔐</span>
-            </div>
-            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-              Connexion
-            </h1>
-            <p className="text-slate-500 mt-1">
-              Accédez à votre espace personnel
-            </p>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <div style={{ width: '64px', height: '64px', margin: '0 auto 1rem', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', boxShadow: '0 8px 20px rgba(99,102,241,0.4)' }}>🔐</div>
+            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem' }}>Connexion</h1>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', margin: 0 }}>Accédez à votre espace personnel</p>
           </div>
 
-          {/* Error */}
           {error && (
-            <div className="alert-error mb-6 animate-fade-in">
-              <span className="text-lg">⚠️</span>
-              <span>{error}</span>
+            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', padding: '0.75rem 1rem', borderRadius: '0.75rem', fontSize: '0.875rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              ⚠️ {error}
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
-              <label className="input-label">
-                Adresse email
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">✉️</span>
-                <input
-                  type="email"
-                  placeholder="votre@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="input-field pl-10"
-                />
-              </div>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#374151', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Adresse email</label>
+              <input type="email" placeholder="votre@email.com" value={email} onChange={e => setEmail(e.target.value)} required
+                style={{ width: '100%', padding: '0.65rem 1rem', border: '1px solid #e2e8f0', borderRadius: '0.75rem', fontSize: '0.9rem', color: '#0f172a', outline: 'none', boxSizing: 'border-box', background: '#f8fafc' }} />
             </div>
-
             <div>
-              <label className="input-label">
-                Mot de passe
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">🔑</span>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="input-field pl-10 pr-12"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition text-sm"
-                  tabIndex={-1}
-                >
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#374151', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Mot de passe</label>
+              <div style={{ position: 'relative' }}>
+                <input type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required
+                  style={{ width: '100%', padding: '0.65rem 3rem 0.65rem 1rem', border: '1px solid #e2e8f0', borderRadius: '0.75rem', fontSize: '0.9rem', color: '#0f172a', outline: 'none', boxSizing: 'border-box', background: '#f8fafc' }} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem' }}>
                   {showPassword ? '🙈' : '👁️'}
                 </button>
               </div>
             </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="btn-primary w-full justify-center mt-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
-            >
-              {isLoading ? (
-                <>
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Connexion en cours...
-                </>
-              ) : (
-                <>🚀 Se connecter</>
-              )}
+            <button type="submit" disabled={isLoading}
+              style={{ padding: '0.75rem', background: isLoading ? '#a5b4fc' : 'linear-gradient(90deg, #6366f1, #8b5cf6)', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '0.95rem', fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer', boxShadow: '0 4px 12px rgba(99,102,241,0.4)', marginTop: '0.5rem' }}>
+              {isLoading ? '⏳ Connexion...' : '🚀 Se connecter'}
             </button>
           </form>
 
-          {/* Footer */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-slate-500">
-              Pas encore de compte ?{' '}
-              <Link href="/register" className="text-primary-600 font-semibold hover:text-primary-700 transition">
-                Créer un compte
-              </Link>
-            </p>
-          </div>
+          <p style={{ textAlign: 'center', fontSize: '0.875rem', color: '#64748b', marginTop: '1.5rem', marginBottom: 0 }}>
+            Pas encore de compte ?{' '}
+            <Link href="/register" style={{ color: '#6366f1', fontWeight: 700, textDecoration: 'none' }}>Créer un compte</Link>
+          </p>
         </div>
-
-        {/* Bottom hint */}
-        <p className="text-center text-white/60 text-xs mt-4">
+        <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem', marginTop: '1rem' }}>
           Plateforme sécurisée — WebStore 2026
         </p>
       </div>

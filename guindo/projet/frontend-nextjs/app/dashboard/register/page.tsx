@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { fastapiLogin } from "@/lib/fastapi";
+import { fastapiRegister } from "@/lib/fastapi";
 
-export default function DashboardLoginPage() {
+export default function DashboardRegisterPage() {
   const router = useRouter();
+  const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [motDePasse, setMotDePasse] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -17,10 +19,10 @@ export default function DashboardLoginPage() {
     setError(null);
     setLoading(true);
     try {
-      await fastapiLogin(email, password);
-      router.push("/dashboard");
-    } catch {
-      setError("Email ou mot de passe incorrect");
+      await fastapiRegister(nom, email, telephone, motDePasse);
+      router.push("/dashboard/login");
+    } catch (err: any) {
+      setError(err.message || "Erreur lors de l'inscription");
     } finally {
       setLoading(false);
     }
@@ -31,7 +33,6 @@ export default function DashboardLoginPage() {
       minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
       background: "radial-gradient(circle at 20% 30%, rgba(124,58,237,0.3), transparent 40%), radial-gradient(circle at 80% 70%, rgba(14,165,233,0.2), transparent 35%), linear-gradient(135deg, #0b1220, #091020)",
     }}>
-      {/* Decorative glow */}
       <div style={{
         position: "absolute", width: "400px", height: "400px", borderRadius: "50%",
         background: "radial-gradient(circle, rgba(124,58,237,0.15), transparent 70%)",
@@ -59,7 +60,7 @@ export default function DashboardLoginPage() {
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
           }}>KaribMarket Admin</h1>
           <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.35rem" }}>
-            Connexion au dashboard
+            Créer un compte administrateur
           </p>
         </div>
 
@@ -72,6 +73,20 @@ export default function DashboardLoginPage() {
         )}
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div>
+            <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.4rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+              Nom
+            </label>
+            <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} required
+              placeholder="Jean Dupont"
+              style={{
+                width: "100%", padding: "0.65rem 1rem", borderRadius: "0.75rem",
+                background: "rgba(15,23,42,0.95)", border: "1px solid rgba(148,163,184,0.2)",
+                color: "#e2e8f0", fontSize: "0.9rem", outline: "none",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
           <div>
             <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.4rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
               Email
@@ -88,9 +103,23 @@ export default function DashboardLoginPage() {
           </div>
           <div>
             <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.4rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+              Téléphone
+            </label>
+            <input type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} required
+              placeholder="+596 696 00 00 00"
+              style={{
+                width: "100%", padding: "0.65rem 1rem", borderRadius: "0.75rem",
+                background: "rgba(15,23,42,0.95)", border: "1px solid rgba(148,163,184,0.2)",
+                color: "#e2e8f0", fontSize: "0.9rem", outline: "none",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
+          <div>
+            <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#94a3b8", marginBottom: "0.4rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
               Mot de passe
             </label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
+            <input type="password" value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} required
               placeholder="••••••••"
               style={{
                 width: "100%", padding: "0.65rem 1rem", borderRadius: "0.75rem",
@@ -108,14 +137,14 @@ export default function DashboardLoginPage() {
             boxShadow: "0 6px 20px rgba(99,102,241,0.35)",
             transition: "all 0.2s ease",
           }}>
-            {loading ? "Connexion..." : "Se connecter →"}
+            {loading ? "Inscription..." : "Créer le compte →"}
           </button>
         </form>
 
         <p style={{ textAlign: "center", marginTop: "1.5rem", fontSize: "0.85rem", color: "#64748b" }}>
-          Pas encore de compte ?{" "}
-          <Link href="/dashboard/register" style={{ color: "#a78bfa", fontWeight: 600, textDecoration: "none" }}>
-            Créer un compte
+          Déjà un compte ?{" "}
+          <Link href="/dashboard/login" style={{ color: "#a78bfa", fontWeight: 600, textDecoration: "none" }}>
+            Se connecter
           </Link>
         </p>
       </div>

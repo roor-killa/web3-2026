@@ -19,7 +19,7 @@ export default function Navbar() {
 
     const navLinks = [
         { href: '/products', label: 'Produits', icon: '📦' },
-        { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+        // { href: '/dashboard', label: 'Dashboard', icon: '📊' },
     ];
 
     return (

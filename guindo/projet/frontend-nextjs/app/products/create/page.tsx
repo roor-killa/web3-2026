@@ -6,132 +6,69 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import { apiPost, ApiResponse } from '@/lib/api';
 
-/**
- * Page de création d'un nouveau produit.
- * Fournit un formulaire pour saisir le nom, le prix et la description.
- */
 export default function CreateProductPage() {
-    const router = useRouter();
-    const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
-    const [description, setDescription] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-    /**
-     * Gère la soumission du formulaire de création.
-     * Envoie les données en JSON à l'API Laravel.
-     */
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setError('');
-        setIsLoading(true);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); setError(''); setIsLoading(true);
+    try {
+      const data = await apiPost<ApiResponse>('/products', { name, price: parseFloat(price), description });
+      if (data.success) { router.push('/products'); router.refresh(); }
+      else setError(data.message || 'Erreur lors de la création');
+    } catch { setError('Impossible de se connecter'); }
+    finally { setIsLoading(false); }
+  };
 
-        try {
-            const data = await apiPost<ApiResponse>('/products', {
-                name,
-                price: parseFloat(price),
-                description,
-            });
+  const inputStyle: React.CSSProperties = { width: '100%', padding: '0.65rem 1rem', border: '1px solid #e2e8f0', borderRadius: '0.75rem', fontSize: '0.9rem', color: '#0f172a', outline: 'none', boxSizing: 'border-box', background: '#f8fafc' };
+  const labelStyle: React.CSSProperties = { display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#374151', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' };
 
-            if (data.success) {
-                // Rediriger vers la liste des produits après succès
-                router.push('/products');
-                router.refresh(); // Rafraîchir les données de la page suivante
-            } else {
-                setError(data.message || 'Erreur lors de la création du produit');
-            }
-        } catch (err) {
-            setError('Impossible de se connecter au serveur');
-            console.error(err);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+  return (
+    <><Navbar />
+    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'system-ui, sans-serif' }}>
+      <div style={{ maxWidth: '560px', margin: '0 auto', padding: '2rem 1.5rem' }}>
+        <Link href="/products" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#6366f1', textDecoration: 'none', fontWeight: 600, fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+          ← Retour aux produits
+        </Link>
 
-    return (
-        <>
-            <Navbar />
-            <div className="min-h-screen flex items-center justify-center p-4" style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
-                <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
-                    <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-2xl font-bold text-gray-900">
-                            ➕ Nouveau Produit
-                        </h1>
-                        <Link
-                            href="/products"
-                            className="text-gray-500 hover:text-gray-700 text-lg font-semibold transition"
-                        >
-                            ✕
-                        </Link>
-                    </div>
-
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-6 text-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Nom */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Nom du produit *
-                            </label>
-                            <input
-                                id="name"
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                required
-                                placeholder="Ex: MacBook Pro"
-                                className="input-field"
-                            />
-                        </div>
-
-                        {/* Prix */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Prix (€) *
-                            </label>
-                            <input
-                                id="price"
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
-                                required
-                                placeholder="0.00"
-                                className="input-field"
-                            />
-                        </div>
-
-                        {/* Description */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Description
-                            </label>
-                            <textarea
-                                id="description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                rows={4}
-                                placeholder="Description détaillée du produit..."
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent transition resize-vertical"
-                            />
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="w-full bg-gradient-primary text-white py-2 px-4 rounded-md font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                        >
-                            {isLoading ? '⏳ Création en cours...' : '✅ Créer le produit'}
-                        </button>
-                    </form>
-                </div>
+        <div style={{ background: 'white', borderRadius: '1.25rem', boxShadow: '0 4px 24px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+          <div style={{ height: '4px', background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }} />
+          <div style={{ padding: '2rem' }}>
+            <div style={{ marginBottom: '1.75rem' }}>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                ➕ Nouveau Produit
+              </h1>
+              <p style={{ color: '#64748b', fontSize: '0.875rem', margin: 0 }}>Remplissez les informations ci-dessous</p>
             </div>
-        </>
-    );
+
+            {error && (
+              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', padding: '0.75rem 1rem', borderRadius: '0.75rem', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
+                ⚠️ {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div><label style={labelStyle}>Nom du produit</label><input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="Ex: MacBook Pro" style={inputStyle} /></div>
+              <div><label style={labelStyle}>Prix (€)</label><input type="number" step="0.01" min="0" value={price} onChange={e => setPrice(e.target.value)} required placeholder="0.00" style={inputStyle} /></div>
+              <div>
+                <label style={labelStyle}>Description</label>
+                <textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} placeholder="Description détaillée..." style={{ ...inputStyle, resize: 'vertical' }} />
+                <p style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.25rem' }}>{description.length} caractères</p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <Link href="/products" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.75rem', background: '#f1f5f9', color: '#475569', borderRadius: '0.75rem', textDecoration: 'none', fontWeight: 600, fontSize: '0.875rem' }}>Annuler</Link>
+                <button type="submit" disabled={isLoading} style={{ flex: 1, padding: '0.75rem', background: isLoading ? '#a5b4fc' : 'linear-gradient(90deg, #6366f1, #8b5cf6)', color: 'white', border: 'none', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer', boxShadow: '0 4px 12px rgba(99,102,241,0.3)' }}>
+                  {isLoading ? '⏳ Création...' : '✅ Créer le produit'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div></>
+  );
 }

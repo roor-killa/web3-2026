@@ -1,16 +1,4 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/login/page": "app/login/page.js",
   "/page": "app/page.js",
-  "/products/[id]/page": "app/products/[id]/page.js",
-  "/products/edit/[id]/page": "app/products/edit/[id]/page.js",
-  "/products/page": "app/products/page.js",
-  "/register/page": "app/register/page.js",
-  "/welcome/page": "app/welcome/page.js",
-  "/products/create/page": "app/products/create/page.js",
-  "/dashboard/chatbot/page": "app/dashboard/chatbot/page.js",
-  "/dashboard/login/page": "app/dashboard/login/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/prix/page": "app/dashboard/prix/page.js",
-  "/dashboard/scrape/page": "app/dashboard/scrape/page.js"
+  "/login/page": "app/login/page.js"
 }

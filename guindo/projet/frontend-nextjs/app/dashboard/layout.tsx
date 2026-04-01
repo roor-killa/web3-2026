@@ -9,8 +9,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
 
+  const isPublicPage = pathname === "/dashboard/login" || pathname === "/dashboard/register";
+
   useEffect(() => {
-    if (pathname === "/dashboard/login") return;
+    if (isPublicPage) return;
     if (!getFastapiToken()) router.push("/dashboard/login");
   }, [pathname]);
 
@@ -19,7 +21,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push("/dashboard/login");
   };
 
-  if (pathname === "/dashboard/login") return <>{children}</>;
+  if (isPublicPage) return <>{children}</>;
 
   const links = [
     { href: "/dashboard", label: "Dashboard", icon: "📊" },
