@@ -1,4 +1,4 @@
-# CM3 - Eloquent ORM et Authentication avec Laravel Sanctum
+# CM4 - Eloquent ORM et Authentication avec Laravel Sanctum
 
 ## Informations du cours
 - **Niveau:** L2 - Web3 (Backend Laravel)
@@ -571,7 +571,7 @@ class User extends Authenticatable
 Vérifiez que le middleware `auth:sanctum` est disponible:
 
 ```php
-// Dans config si Laravel 10
+// Dans config si Laravel 10+
 'api' => [
     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
     'throttle:api',
@@ -977,8 +977,4 @@ Chaque groupe continue de développer son module avec Eloquent et Sanctum:
 - Qualité du code et commentaires (15%)
 - Documentation API (15%)
 
-**Note:** Tout code copié d'une IA doit être expliqué ligne par ligne lors de la défense.
-
----
-
-Bon courage! 🚀
+**Note:** Tout code copié d'une IA doit être expliqué ligne par ligne lors de la présentation.
