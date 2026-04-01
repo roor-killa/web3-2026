@@ -331,21 +331,29 @@ docker compose exec laravel_app php artisan tinker
 
 ### 🐍 Service FastAPI (Port 8001)
 
-Service Python pour la programmation orientée objets avec Swagger UI auto-généré.
+> ⚠️ Le dossier `fastapi-poo/` est un service vide non utilisé. Il peut être retiré du `docker-compose.yml`.
 
-**Documentation interactive** : [Swagger UI](http://localhost:8001/docs)
+Le vrai service FastAPI consommé par ce frontend est **karibmarket-api** (backend-2026), qui tourne sur le port **8000** et est appelé via `lib/fastapi.ts`.
 
-**Commandes utiles**:
-```bash
-# Voir les logs en temps réel
-docker compose logs -f fastapi
+### 🔗 Intégration avec karibmarket-api (backend-2026)
 
-# Accéder au shell Python
-docker compose exec fastapi python
+Le frontend Next.js consomme directement l'API `karibmarket-api` pour toute la partie prix et scraping :
 
-# Tests pytest
-docker compose exec fastapi pytest
+```typescript
+// lib/fastapi.ts
+const FASTAPI_URL = "http://localhost:8000/api/v1";
 ```
+
+| Page | Endpoint karibmarket-api |
+|------|--------------------------|
+| `/dashboard` | `GET /admin/scrape-urls/stats` |
+| `/dashboard/prix` | `GET /prix` |
+| `/dashboard/scrape` | `POST /admin/scrape/run` |
+| Gestion URLs | `GET/POST/PATCH/DELETE /admin/scrape-urls` |
+
+L'authentification vers karibmarket-api utilise un token JWT distinct (`fastapi_token` dans localStorage), séparé du token Sanctum Laravel.
+
+**karibmarket-api doit tourner** sur `http://localhost:8000` pour que le dashboard fonctionne.
 
 ### 🗄️ Base de Données PostgreSQL (Port 5433)
 

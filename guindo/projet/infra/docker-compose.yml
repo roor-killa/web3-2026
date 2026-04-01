@@ -43,6 +43,8 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://laravel_nginx:80
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ../frontend-nextjs:/app
       - /app/node_modules
