@@ -6,7 +6,7 @@ import { Container, Card, Button, Form, Alert } from "react-bootstrap";
 
 export default function FormulairePage() {
   const router = useRouter();
-  const API_BASE_URL = "http://localhost:8000/api";
+  const API_BASE_URL = "http://localhost:8001/api";
   const [newCertificat, setNewCertificat] = useState({
     identifiant: "",
     nom_etudiant: "",

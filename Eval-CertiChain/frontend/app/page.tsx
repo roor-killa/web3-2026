@@ -16,7 +16,7 @@ interface Certificat {
 export default function Home() {
   const router = useRouter();
   const [certificats, setCertificats] = useState<Certificat[]>([]);
-  const API_BASE_URL = "http://localhost:8000/api";
+  const API_BASE_URL = "http://localhost:8001/api";
   
         
 
@@ -28,19 +28,6 @@ export default function Home() {
       .then((data) => setCertificats(Array.isArray(data) ? data : data.data ?? []))
       .catch((err) => console.error("Error:", err));
   }, []);
-
-  const handleDelete = async (id: number) => {
-    const res = await fetch(`${API_BASE_URL}/certificats/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => null);
-      throw new Error(data?.message ?? "Suppression impossible");
-    }
-
-    setCertificats((prev) => prev.filter((p) => p.id !== id));
-  };
 
 
   return (
@@ -61,7 +48,6 @@ export default function Home() {
             <th>intitule</th>
             <th>date_emission</th>
             <th>hash_blockchain</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -73,12 +59,6 @@ export default function Home() {
               <td>{certificat.intitule}</td>
               <td>{certificat.date_emission}</td>
               <td>{certificat.hash_blockchain}</td>
-              <td> 
-                  <Button variant="danger" size="sm" onClick={() => handleDelete(certificat.id)}>
-                    Supprimer
-                  </Button>
-                
-              </td>
             </tr>
           ))}
         </tbody>

@@ -56,7 +56,8 @@ Structure du projet :
 
 ### Question 4 – Routes API Laravel
 
-*Votre réponse ici...*
+GET http://localhost:8001/api/certificats  : retourne un json avec tous les certificats
+POST http://localhost:8001/api/certificats : permet de creer les certificats
 
 ---
 
@@ -64,10 +65,14 @@ Structure du projet :
 
 ### Question 5 – Intérêt de Docker
 
-Permet de facilement transferer des projects de PC a un autre, facilite le deploiment de projet 
+Permet de facilement transferer des projects de PC a un autre, facilite le deploiment de projet, permet de regler les problemes de compabilité, permet d'enfermer le projet donc sa ne va pas affecter les autres
 
 ### Question 6 – Services Docker
 
+    nginx : Permet de servir le frontend dans le port https 80
+    postgres : Permet de stocker les informations 5434/5432
+    nextjs : Permet de gerer/creer le frontend de l'application 
+    laravel : Permet de gerer le backend dont les routes, models, appel base de donnée; controllers 8001/8000
 
 ---
 
@@ -75,7 +80,17 @@ Permet de facilement transferer des projects de PC a un autre, facilite le deplo
 
 ### Question 7 – Affichage Next.js ↔ Laravel
 
-*Votre réponse ici...*
+côté Laravel
+    On fait appel au route http://localhost:8001/api/certificats qui appel la base de donnée, prend les données et le retourne en format json 
+
+côté Next.js 
+    On fetch la donnée retournée par la route http://localhost:8001/api/certificats
+    et on le stocke dans une variable useState 'certificats'
+
+côté affichage
+    On prend la variable 'certificats' puis on l'affiche utlisant .map qui permet de prendre chaque certfications/enfants et affiche ses données dans le tableau utilisant 
+    <td>{certificats.{clé}}</td>
+
 
 ### Question 8 – PostgreSQL vs Blockchain
 

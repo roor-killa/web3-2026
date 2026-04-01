@@ -37,30 +37,4 @@ class CertificatController extends Controller
         return response()->json($certificat, 201);
     }
     
-    // PUT /api/certificats/{chiffre}
-    public function update(Request $request, $id)
-    {
-        $certificat = Certificat::findOrFail($id);
-        
-        $validated = $request->validate([
-            'identifiant' => 'sometimes|required|string|max:255|unique:certificats,identifiant,' . $certificat->id,
-            'nom_etudiant' => 'sometimes|required|string|max:255',
-            'intitule' => 'sometimes|required|string|max:255',
-            'date_emission' => 'sometimes|required|date',
-            'hash_blockchain' => 'sometimes|required|string|max:255',
-        ]);
-        
-        $certificat->update($validated);
-        
-        return response()->json($certificat);
-    }
-    
-    // DELETE /api/certificats/5
-    public function destroy($id)
-    {
-        $certificat = Certificat::findOrFail($id);
-        $certificat->delete();
-        
-        return response()->json(null, 204);
-    }
 }
