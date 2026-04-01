@@ -1,1 +1,125 @@
+""" 
+CertiChain - Evalutation Web3
 
+- Nom :    METTAVANT
+- PRENOM : ARTHUR
+- DATE :   01/04/2026
+
+-------------
+
+partie 1 — Compréhension de l'architecture
+
+    Question 1 – Rôle des technologies
+
+- Next.js : Framework React utilisé pour le frontend. Il gère l'interface utilisateur, 
+            le rendu (côté client ou serveur) et assure une navigation fluide et rapide
+             pour l'étudiant ou l'administrateur.
+- Laravel : Framework PHP utilisé pour le backend (API). Il contient la logique métier,
+             gère l'authentification, les routes de l'application et communique avec la base
+             de données et la blockchain.
+- PostgreSQL : Système de gestion de base de données relationnelle. Il stocke de manière structurée
+             les informations "lourdes" ou privées des certificats (noms, dates) qui n'ont pas besoin
+             d'être sur la blockchain.
+- Docker : Outil de conteneurisation. Il permet d'emballer l'application et ses dépendances dans des
+             conteneurs isolés, garantissant que le projet fonctionne de la même manière sur n'importe 
+             quelle machine.
+             
+
+    Question 2 – Architecture de l'application
+
+Interface Utilisateur : Next.js (Frontend).
+
+Logique Métier : Laravel (Backend API).
+
+Stockage des données : PostgreSQL (Données classiques) + Blockchain (Preuve d'authenticité).
+
+Communication : Le frontend (Next.js) communique avec le backend (Laravel) 
+                via des requêtes HTTP (REST API). Le backend interagit ensuite avec PostgreSQL (SQL) 
+                et la Blockchain (via des bibliothèques comme Web3.php ou ethers.js).
+
+-------------
+                               
+PARTIE 2 — Modélisation fonctionnelle
+
+
+    Question 3 – Table PostgreSQL certificates
+
+Nom de la colonne	 |          Type	     |     Contrainte
+        id	         |     UUID ou BIGINT	 |  Clé primaire (Primary Key)
+    student_name	 |        VARCHAR(255)	 |       NOT NULL
+certification_title	 |        VARCHAR(255)   |	     NOT NULL
+issue_date	         |           DATE	     |       NOT NULL
+blockchain_hash	     |       VARCHAR(255)	 |   UNIQUE / NOT NULL (Preuve d'ancrage)
+
+    Question 4 – Routes API Laravel
+
+- Création :
+
+        Méthode : POST
+
+        URL : /api/certificates
+
+        Rôle : Enregistrer les données en base et déclencher l'ancrage blockchain.
+
+- Liste :
+
+        Méthode : GET
+
+        URL : /api/certificates
+
+        Rôle : Récupérer l'ensemble des certificats pour les afficher.
+
+-------------
+        
+PARTIE 3 — Docker et déploiement local
+
+    Question 5 – intérêt de docker
+
+    Docker permet de figer les versions exactes des environnements dans des conteneurs isolés
+(par exemple, PHP 8.3 pour Laravel). Cela évite les conflits avec d'autres logiciels installés sur 
+la machine et garantit que l'application fonctionnera de manière identique chez le développeur. 
+Ce projet repose sur l'orchestration de plusieurs composants (Frontend, Backend, Base de données). 
+Grâce à Docker Compose, on peut lancer l'intégralité de l'infrastructure avec une seule commande.
+Cela automatise la configuration du réseau entre Laravel et PostgreSQL, permettant au backend de 
+communiquer immédiatement avec la base de données sans configuration manuelle fastidieuse du système hôte.
+
+    Question 6 – services docker du projet
+
+- Conteneur frontend (Next.js) : 
+    Il gère l'interface utilisateur et le rendu des pages, permettant aux étudiants de consulter
+    et de visualiser leurs certificats de manière interactive.
+
+- Conteneur backend (Laravel) : 
+    Il traite la logique métier, sécurise les accès aux données et fait le pont entre l'interface
+    utilisateur, la base de données et les interactions avec la blockchain.
+
+- Conteneur database (PostgreSQL) : 
+    Il assure le stockage persistant et structuré des informations relatives aux certificats et 
+    aux utilisateurs de l'application.
+
+-------------
+    
+PARTIE 5 — Exercice pratique / Réflexion technique
+
+    Question 7 – Affichage des certificats Next.js <-> Laravel
+
+Côté Laravel : Créer un contrôleur qui récupère les enregistrements de la table certificates 
+                et les retourne au format JSON via la route GET.
+
+Côté Next.js : Utiliser fetch ou axios dans un composant (ou via getServerSideProps) pour 
+                appeler l'URL de l'API Laravel.
+
+Côté Affichage : Mapper sur le tableau de données reçu pour générer des composants de cartes 
+                (Cards) ou un tableau HTML présentant chaque certificat.
+
+    Question 8 : PostgreSQL vs BlockChain - analyse critique
+
+    
+    Je ne suis pas d'accord, car cette vision confond gestion et certification. Si PostgreSQL suffit 
+pour stocker les informations, il reste une base centralisée modifiable par quiconque possède les 
+accès administrateur, ce qui n'offre aucune garantie d'inviolabilité. L'intérêt de CertiChain réside 
+dans la blockchain : elle agit comme un notaire numérique immuable. En y ancrant une preuve (hash), 
+on permet à un tiers de vérifier l'authenticité d'un diplôme sans dépendre de l'honnêteté de l'école. 
+Sans blockchain, le projet perd sa valeur de "chaîne de confiance" et devient une simple base de données 
+vulnérable.
+        """
