@@ -30,7 +30,6 @@ Docker est un programme de conteneurisation qui permet d'exécuter divers progra
 
 Le frontend Next.js gère les interactions utilisateur et fait appel à des API pour communiquer avec le backend Laravel. Ce dernier gère la logique métier et fait appel à la base de données PostgreSQL pour stocker les informations nécessaires.
 
----
 
 ## Partie 2 – Modélisation fonctionnelle
 

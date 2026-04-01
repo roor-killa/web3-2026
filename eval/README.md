@@ -63,11 +63,12 @@ eval/
 
 ### API Endpoints
 
-| Method | Endpoint              | Description                    |
-|--------|----------------------|--------------------------------|
-| GET    | /api/certificates     | Get list of all certificates   |
-| POST   | /api/certificates     | Create a new certificate       |
-| GET    | /api/certificates/{id}| Get a specific certificate     |
+| Method | Endpoint                       | Description                    |
+|--------|--------------------------------|--------------------------------|
+| GET    | /api/certificates              | Get list of all certificates   |
+| POST   | /api/certificates              | Create a new certificate       |
+| GET    | /api/certificates/{id}         | Get a specific certificate     |
+| GET    | /api/certificates/verify/{hash}| Verify certificate by hash     |
 
 ## Database Schema
 
