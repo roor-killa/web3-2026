@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: certichain
+      POSTGRES_USER: certichain_user
+      POSTGRES_PASSWORD: secret
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./Backend-Laravel/certichain
+      dockerfile: Dockerfile
+    working_dir: /var/www/html
+    volumes:
+      - ./Backend-Laravel/certichain:/var/www/html
+    environment:
+      APP_ENV: local
+      APP_DEBUG: 'true'
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: '5432'
+      DB_DATABASE: certichain
+      DB_USERNAME: certichain_user
+      DB_PASSWORD: secret
+    ports:
+      - '8000:8000'
+    depends_on:
+      - postgres
+
+  frontend:
+    image: node:20
+    working_dir: /usr/src/app
+    volumes:
+      - ./Frontend-Next.js/certichain:/usr/src/app
+    ports:
+      - '3000:3000'
+    command: sh -c "npm install && npm run dev -- --hostname 0.0.0.0"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
