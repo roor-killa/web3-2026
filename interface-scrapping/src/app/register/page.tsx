@@ -11,7 +11,7 @@ export default function RegisterPage() {
   const [telephone,setTelephone] = useState('')
   const [email,setEmail] = useState('')
   const [mdp,setMdp] = useState('')
-	const API_BASE_URL = "http://localhost:8000";
+	const API_BASE_URL = process.env.NEXT_PUBLIC_KARIBDOCS_API_URL ?? "http://localhost:8000";
 
   const router = useRouter()
 

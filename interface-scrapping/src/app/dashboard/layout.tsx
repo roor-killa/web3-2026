@@ -2,7 +2,10 @@
 'use client'
 
 import Link from "next/link";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
+import { clearAuthStorage, hasValidAccessToken } from "@/lib/karibdocs-api";
 
 
 export default function RootLayout({
@@ -10,6 +13,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!hasValidAccessToken()) {
+      router.replace("/login");
+    }
+  }, [router, pathname]);
+
+  function handleDisconnect() {
+    clearAuthStorage();
+    router.replace("/login");
+  }
 
   return (
     <>
@@ -29,10 +45,14 @@ export default function RootLayout({
             <span>logo</span>
           </Navbar.Brand>
 
-          <Nav className="ms-auto d-flex flex-row gap-3">
-            <Nav.Link as={Link} href="/dashboard">Scrap</Nav.Link>
+          <Nav className="ms-auto d-flex flex-row gap-3 align-items-center">
+            <Nav.Link as={Link} href="/dashboard">Scraping</Nav.Link>
             <Nav.Link as={Link} href="/dashboard/data">Data</Nav.Link>
+            <Nav.Link as={Link} href="/dashboard/drive">Drive</Nav.Link>
             <Nav.Link as={Link} href="/dashboard/chatbot">Chatbot</Nav.Link>
+            <Button type="button" variant="outline-danger" size="sm" onClick={handleDisconnect}>
+              Disconnect
+            </Button>
           </Nav>
         </Container>
       </Navbar>

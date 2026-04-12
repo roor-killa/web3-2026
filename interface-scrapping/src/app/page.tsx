@@ -2,14 +2,13 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { hasValidAccessToken } from "@/lib/karibdocs-api";
 
 export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-
-    if (token) {
+    if (hasValidAccessToken()) {
       router.replace("/dashboard");
       return;
     }

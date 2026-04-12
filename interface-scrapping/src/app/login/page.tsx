@@ -2,17 +2,24 @@
 
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Container, Card, Form, Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
+import { hasValidAccessToken } from "@/lib/karibdocs-api";
 
 
 export default function LoginPage() {
 
 const [email,setEmail] = useState('')
   const [mdp,setMdp] = useState('')
-  const API_BASE_URL = "http://localhost:8000";
+  const API_BASE_URL = process.env.NEXT_PUBLIC_KARIBDOCS_API_URL ?? "http://localhost:8000";
   const router = useRouter();
+
+  useEffect(() => {
+    if (hasValidAccessToken()) {
+      router.replace("/dashboard");
+    }
+  }, [router]);
 
 
   function Login(e: FormEvent<HTMLFormElement>){
@@ -41,7 +48,7 @@ const [email,setEmail] = useState('')
         if (data?.access_token) {
           localStorage.setItem("accessToken", data.access_token);
         }
-        router.push("/");
+        router.replace("/dashboard");
       }
 
       return data;

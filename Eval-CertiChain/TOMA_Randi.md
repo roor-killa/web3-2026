@@ -94,4 +94,3 @@ côté affichage
 
 ### Question 8 – PostgreSQL vs Blockchain
 
-*Votre réponse ici...*
