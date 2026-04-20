@@ -3,7 +3,7 @@
  * Séparé du client Laravel pour ne pas interférer
  */
 
-const FASTAPI_URL = "http://localhost:8000/api/v1";
+const FASTAPI_URL = (process.env.NEXT_PUBLIC_FASTAPI_URL ?? "http://localhost:8000") + "/api/v1";
 
 // Token spécifique FastAPI (stocké séparément du token Laravel)
 export const getFastapiToken = (): string | null => {

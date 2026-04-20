@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getFastapiToken } from "@/lib/fastapi";
 
-const FASTAPI = "http://localhost:8000/api/v1";
+const FASTAPI = (process.env.NEXT_PUBLIC_FASTAPI_URL ?? "http://localhost:8000") + "/api/v1";
 
 interface ScrapeLog {
   id: number;
